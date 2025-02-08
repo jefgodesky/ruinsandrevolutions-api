@@ -60,4 +60,13 @@ export default class UserRepository extends Repository<User> {
       ? await this.get(id)
       : await this.getByUsername(id)
   }
+
+  async filterUserIDs (ids: string[]): Promise<string[]> {
+    if (ids.length < 1) return []
+    const uuids = ids.filter(id => uuid.v4.validate(id))
+    const params = uuids.map((_id: string, index: number) => `$${index + 1}`).join(', ')
+    const query = `SELECT id FROM users WHERE id IN (${params})`
+    const results = await DB.query<{ id: string }>(query, uuids)
+    return results.rows.map(row => row.id)
+  }
 }

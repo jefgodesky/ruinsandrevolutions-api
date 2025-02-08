@@ -165,4 +165,19 @@ describe('UserRepository', () => {
       expect(actual.rows).toHaveLength(0)
     })
   })
+
+  describe('filterUserIDs', () => {
+    it('filters an array of strings to valid user IDs', async () => {
+      const { user } = await setupUser({ createAccount: false, createToken: false })
+      const arr = ['not a UUID', crypto.randomUUID(), user.id!]
+      const actual = await repository.filterUserIDs(arr)
+      expect(actual).toHaveLength(1)
+      expect(actual[0]).toBe(user.id)
+    })
+
+    it('returns an empty array when given one', async () => {
+      const actual = await repository.filterUserIDs([])
+      expect(actual).toHaveLength(0)
+    })
+  })
 })
