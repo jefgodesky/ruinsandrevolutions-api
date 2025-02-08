@@ -1,17 +1,20 @@
 openapi: 3.0.3
 info:
-  title: Starter API
+  title: Ruins & Revolutions API
   description: |-
-    This is a starting point for a new API. Add a nice description here. Markdown supported!
-  termsOfService: https://example.com/terms
+    The _Ruins & Revolutions_ API provides programmatic
+    access to the catalogue of scales, scrolls, tables,
+    and other items that _Ruins & Revolutions_ players
+    have developed and shared with the community.
+  termsOfService: https://ruinsandrevolutions.com/terms
   contact:
-    email: you@example.com
+    email: api@ruinsandrevolutions.com
   license:
     name: GPL v3
     url: https://www.gnu.org/licenses/gpl-3.0.en.html
   version: '1.0'
 servers:
-  - url: https://api.example.com/v1/
+  - url: https://api.ruinsandrevolutions.com/v1/
 tags:
   - name: Users
     description: Operations related to users and user records.
