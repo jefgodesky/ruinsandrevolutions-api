@@ -1,0 +1,45 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd="pg_isready -U test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+      - name: Start API container
+        run: |
+          docker compose -f ./env/test-workflow.yml up --build -d
+      - name: Run tests
+        run: |
+          docker logs -f tests 2>&1 || exit 1
+          TEST_EXIT_CODE=$(docker inspect tests --format='{{.State.ExitCode}}')
+          if [ "$TEST_EXIT_CODE" -ne 0 ]; then
+            exit $TEST_EXIT_CODE
+          fi

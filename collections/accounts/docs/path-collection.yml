@@ -1,0 +1,56 @@
+post:
+  tags:
+    - Accounts
+  summary: Add a new account
+  description:  |
+    This endpoint allows the authenticated user to add a new OAuth
+    2.0 provider account to her API user account.
+    
+    The `provider` can be `google`, `github`, or `discord`. This
+    indicates that the accompanying `token` came from a successful
+    OAuth 2.0 authorization using that provider (Google,
+    GitHub, or Discord; note that with Google, it’s the _ID_ token
+    that should be sent to this endpoint, but for GitHub or Discord
+    you should send the _access_ token).
+    
+    The same data can be supplied to the `POST /v1/auth/tokens`
+    endpoint to create a new authentication token, but that endpoint
+    creates a new user with the given account. This endpoint adds
+    the account to an already-established and authenticated user,
+    allowing users to associate multiple OAuth 2.0 accounts to their
+    single user account, giving them the ability to authenticate as
+    the same user through multiple OAuth 2.0 providers.
+  operationId: addAccount
+  security:
+    - bearerAuth: []
+  requestBody:
+    description: Add a new account
+    content:
+      application/json:
+        schema:
+          $ref: "../../auth/tokens/docs/schemas.yml#/TokenAccessCreation"
+  responses:
+    200:
+      description: New account added.
+      content:
+        application/json:
+          schema:
+            $ref: "../../auth/providers/docs/schemas.yml#/ProviderResponse"
+get:
+  tags:
+    - Accounts
+  summary: List existing accounts
+  description:  |
+    This endpoint returns the OAuth 2.0 provider accounts that the
+    authenticated user has authorized and connected to her API
+    user account.
+  operationId: listAccounts
+  security:
+    - bearerAuth: []
+  responses:
+    200:
+      description: Accounts returned.
+      content:
+        application/json:
+          schema:
+            $ref: "../../auth/providers/docs/schemas.yml#/ProvidersResponse"

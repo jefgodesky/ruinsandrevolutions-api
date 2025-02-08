@@ -1,0 +1,34 @@
+post:
+  tags:
+    - Users
+  summary: Grants a role to a user.
+  description: |
+    This endpoint grants a specified role (`role`) to the user
+    identified by `userId`. You must be authenticated to use this
+    endpoint, and your must have the specific permission to grant
+    the role in question.
+  operationId: grantRole
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - $ref: "./schemas.yml#/Role"
+  responses:
+    204:
+      description: Role granted to user.
+delete:
+  tags:
+    - Users
+  summary: Revokes a role from a user.
+  description: |
+    This endpoint revokes a specified role (`role`) from the user
+    identified by `userId`. You must be authenticated to use this
+    endpoint, and your must have the specific permission to revoke
+    the role in question.
+  operationId: revokeRole
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - $ref: "./schemas.yml#/Role"
+  responses:
+    204:
+      description: Role revoked from user.

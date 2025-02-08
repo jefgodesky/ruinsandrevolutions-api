@@ -1,0 +1,46 @@
+get:
+  tags:
+    - Accounts
+  summary: Return a single account.
+  description:  |
+    This endpoint returns a single OAuth 2.0 provider accounts that
+    the authenticated user has authorized and connected to her API
+    user account.
+  operationId: getAccount
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: provider
+      in: path
+      description: The provider for the account requested.
+      required: true
+      schema:
+        $ref: "../../auth/providers/docs/schemas.yml#/ProviderID"
+  responses:
+    200:
+      description: Account returned.
+      content:
+        application/json:
+          schema:
+            $ref: "../../auth/providers/docs/schemas.yml#/ProviderResponse"
+delete:
+  tags:
+    - Accounts
+  summary: Delete an account.
+  description:  |
+    This endpoint deletes an OAuth 2.0 provider accounts that
+    the authenticated user has authorized and connected to her API
+    user account.
+  operationId: deleteAccount
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: provider
+      in: path
+      description: The provider for the account requested.
+      required: true
+      schema:
+        $ref: "../../auth/providers/docs/schemas.yml#/ProviderID"
+  responses:
+    204:
+      description: Account deleted.

@@ -1,0 +1,12 @@
+# Environment variables
+*.env
+!test-workflow.*.env
+
+# Built files
+docs/bundle.yml
+
+# IDE configuration files
+.idea
+
+# Local files
+.DS_Store

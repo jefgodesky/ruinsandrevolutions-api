@@ -1,0 +1,41 @@
+JSONAPIHeader:
+  description: A header attached to all responses indicating the version of JSON:API that is implemented here.
+  type: object
+  required: [version]
+  properties:
+    version:
+      type: string
+      example: '1.1'
+Links:
+  description: The standard links supplied with all responses.
+  type: object
+  required: [self]
+  properties:
+    self:
+      type: string
+      example: "https://api.example.com/v1/items/1"
+    describedBy:
+      type: string
+      example: "https://api.example.com/v1/docs"
+PaginatedLinks:
+  description: Paginated links for endpoints that respond with many records.
+  type: object
+  required: [first, prev, next, last]
+  properties:
+    first:
+      type: string
+      example: "https://api.example.com/v1/items?offset=0&limit=10"
+    prev:
+      type: string
+      example: "https://api.example.com/v1/items?offset=10&limit=10"
+    next:
+      type: string
+      example: "https://api.example.com/v1/items?offset=30&limit=10"
+    last:
+      type: string
+      example: "https://api.example.com/v1/items?offset=90&limit=10"
+UUID:
+  type: string
+  pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+  minLength: 36
+  maxLength: 36

@@ -1,0 +1,67 @@
+get:
+  tags:
+    - Users
+  summary: Retrieve a single user
+  description: Retrieves the record for a single user.
+  operationId: getUser
+  parameters:
+    - $ref: "./schemas.yml#/UserID"
+    - $ref: "./schemas.yml#/UserFields"
+  responses:
+    200:
+      description: User found.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yml#/UserResponse"
+patch:
+  tags:
+    - Users
+  summary: Update a single user
+  description: |
+    This endpoint allows you to update a user. You must be
+    authenticated to use this endpoint, as you can only update your
+    own user account unless you have the administrator role.
+  operationId: patchUser
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - $ref: "./schemas.yml#/UserID"
+    - $ref: "./schemas.yml#/UserFields"
+  requestBody:
+    description: |
+      The user selected by `userId` will be updated to the new value
+      supplied for each attribute provided. Any attributes not
+      provided will be left as they are on the existing user object.
+    content:
+      application/json:
+        schema:
+          $ref: "./schemas.yml#/UserPatch"
+  responses:
+    200:
+      description: User updated.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yml#/UserResponse"
+delete:
+  tags:
+    - Users
+  summary: Delete a single user
+  description: |
+    The user selected by `userId` is deleted. This is an irreversible
+    hard delete, so clients implementing this endpoint should warn
+    the user before sending the request. For a reversible soft
+    delete, consider using `DELETE /users/{userId}/roles/{role}` to
+    remove the `active` and `listed` roles.
+    You must be authenticated to use this endpoint, as you can only
+    delete your own user account unless you have the administrator
+    role.
+  operationId: deleteUser
+  security:
+    - bearerAuth: [ ]
+  parameters:
+    - $ref: "./schemas.yml#/UserID"
+  responses:
+    204:
+      description: User deleted.

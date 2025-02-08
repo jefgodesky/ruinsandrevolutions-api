@@ -1,0 +1,40 @@
+openapi: 3.0.3
+info:
+  title: Starter API
+  description: |-
+    This is a starting point for a new API. Add a nice description here. Markdown supported!
+  termsOfService: https://example.com/terms
+  contact:
+    email: you@example.com
+  license:
+    name: GPL v3
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+  version: '1.0'
+servers:
+  - url: https://api.example.com/v1/
+tags:
+  - name: Users
+    description: Operations related to users and user records.
+  - name: Authentication
+    description: Authentication
+  - name: Accounts
+    description: The OAuth 2.0 provider accounts that a user can associate with her account.
+paths:
+  /accounts:
+    $ref: "../collections/accounts/docs/path-collection.yml"
+  /accounts/{provider}:
+    $ref: "../collections/accounts/docs/path-resource.yml"
+  /auth/tokens:
+    $ref: "../collections/auth/tokens/docs/path-collection.yml"
+  /auth/providers:
+    $ref: "../collections/auth/providers/docs/path-collection.yml"
+  /users/{userId}:
+    $ref: "../collections/users/docs/path-resource.yml"
+  /users/{userId}/roles/{role}:
+    $ref: "../collections/users/roles/docs/path-resource.yml"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

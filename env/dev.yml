@@ -1,0 +1,36 @@
+name: api_starter_dev
+
+volumes:
+  db: {}
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ../migrations:/scripts/migrations
+      - ../init.sh:/scripts/init.sh
+    env_file:
+      - ./dev.postgres.env
+    command: >
+      sh -c "
+      docker-entrypoint.sh postgres &
+      sleep 5 &&
+      sh /scripts/init.sh &&
+      wait"
+
+  api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: api
+    ports:
+      - 8000:8000
+    env_file:
+      - ./dev.postgres.env
+      - ./dev.api.env
+    depends_on:
+      - postgres

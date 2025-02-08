@@ -1,0 +1,49 @@
+post:
+  tags:
+    - Authentication
+  summary: Authenticate
+  description: |
+    This is the authentication endpoint. It can be used in one of two
+    ways: by providing a `provider` and `token` to get a new JWT
+    authentication token, or by providing an existing JWT
+    authentication token to get a new one.
+    
+    In the first mode, `provider` can be `google`, `github`, or
+    `discord`. This indicates that the accompanying `token` came from
+    a successful OAuth 2.0 authorization using that provider (Google,
+    GitHub, or Discord; note that with Google, it’s the _ID_ token
+    that should be sent to this endpoint, but for GitHub or Discord
+    you should send the _access_ token).
+    
+    If you have used this account to authenticate before, you will
+    receive a new JWT authorization token tied to that user and
+    account. If not, a new user and account will be created with the
+    information from that token (_see_ `POST /v1/users/{id}/accounts`
+    for how to attach additional accounts to the same user).
+    
+    JWT authentication tokens expire after 10 minutes, so rather than
+    putting users through another OAuth 2.0 authorization flow every
+    10 minutes, the other way to use this endpoint is to refresh an
+    expired (or soon to expire) JWT authentication token for a new
+    one. Each token has a new refresh code, and so long as you have
+    the _latest_ issued JWT, you can continue refreshing it for new
+    tokens for up to 7 days before the user has to go through the
+    OAuth 2.0 authorization flow again. To use the endpoint in this
+    way, skip the `provider` attribute and pass the JWT
+    authentication token as `token`.
+  operationId: createToken
+  requestBody:
+    description: Authenticate
+    content:
+      application/json:
+        schema:
+          oneOf:
+            - $ref: "./schemas.yml#/TokenAccessCreation"
+            - $ref: "./schemas.yml#/TokenRefreshCreation"
+  responses:
+    200:
+      description: Token issued.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yml#/TokenResponse"

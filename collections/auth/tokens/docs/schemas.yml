@@ -1,0 +1,65 @@
+TokenAccessCreation:
+  description: Use this object to send the ID token from Google OAuth 2.0 authorization, or an access token from Discord or GitHub OAuth 2.0 authorization.
+  type: object
+  required: [data]
+  properties:
+    data:
+      type: object
+      required: [type, attributes]
+      properties:
+        type:
+          type: string
+          example: tokens
+        attributes:
+          type: object
+          required: [provider, token]
+          properties:
+            provider:
+              type: string
+              enum: [google, github, discord]
+              description: The OAuth 2.0 provider that the token is coming from.
+            token:
+              type: string
+              description: The ID token (if the provider is Google) or the access token (if the provider is GitHub or Discord) that you would like to use to authenticate.
+TokenRefreshCreation:
+  description: Use this object to send an existing authentication JWT to get a new one.
+  type: object
+  required: [data]
+  properties:
+    data:
+      type: object
+      required: [type, attributes]
+      properties:
+        type:
+          type: string
+          example: tokens
+        attributes:
+          type: object
+          required: [token]
+          properties:
+            token:
+              type: string
+              description: Your existing JWT authentication token.
+TokenResponse:
+  description: A JSON:API response that returns an authentication token.
+  type: object
+  properties:
+    jsonapi:
+      $ref: "../../../../docs/schemas.yml#/JSONAPIHeader"
+    links:
+      $ref: "../../../../docs/schemas.yml#/Links"
+    data:
+      type: object
+      required: [ type, attributes ]
+      properties:
+        type:
+          type: string
+          example: "tokens"
+        id:
+          $ref: "../../../../docs/schemas.yml#/UUID"
+        attributes:
+          type: object
+          properties:
+            token:
+              type: string
+              description: Your new JWT authentication token.

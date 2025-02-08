@@ -1,0 +1,52 @@
+name: api_starter_test
+
+volumes:
+  db: {}
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: postgres
+    ports:
+      - 5433:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ../migrations:/scripts/migrations
+      - ../init.sh:/scripts/init.sh
+    env_file:
+      - ./test.postgres.env
+    command: >
+      sh -c "
+      docker-entrypoint.sh postgres &
+      sleep 5 &&
+      sh /scripts/init.sh &&
+      wait"
+
+  api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: api
+    ports:
+      - 8001:8000
+    env_file:
+      - ./test.postgres.env
+      - ./test.api.env
+    depends_on:
+      - postgres
+    command: >
+      sh -c "
+      deno task dev:start"
+
+  tests:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: tests
+    env_file:
+      - ./test.postgres.env
+      - ./test.api.env
+    entrypoint: >
+      sh -c "
+      ./wait-for-it.sh api:8001 --timeout=30 &&
+      deno test --allow-net --allow-env --allow-read --allow-import --trace-leaks"
