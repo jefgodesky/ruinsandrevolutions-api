@@ -1,18 +1,18 @@
 import type Scale from '../../types/scale.ts'
+import type ScaleCreation from '../../types/scale-creation.ts'
+import type User from '../../types/user.ts'
 import ItemRepository from '../items/repository.ts'
-import scaleToItemRecord from '../../utils/transformers/scale-to/item-record.ts'
+import scaleCreationToItemRecord from '../../utils/transformers/scale-creation-to/item-record.ts'
 import itemRecordAndAuthorsToScale from '../../utils/transformers/item-record-and-authors-to/scale.ts'
 
 export default class ScaleRepository {
-  async save (scale: Scale): Promise<Scale | null> {
-    if (!scale.id) return await this.create(scale)
-    return null
-  }
-
-  protected async create (scale: Scale): Promise<Scale | null> {
+  async create (post: ScaleCreation): Promise<Scale | null> {
     const repository = new ItemRepository()
-    const { authors } = scale
-    const record = await repository.save(scaleToItemRecord(scale), authors)
+    const data = post.data.relationships?.authors?.data
+    const authors = (Array.isArray(data) ? data : [data])
+      .filter(a => a !== undefined)
+      .map(resource => ({ id: resource.id, name: '' } as User))
+    const record = await repository.save(scaleCreationToItemRecord(post), authors)
     return record === null
       ? null
       : itemRecordAndAuthorsToScale(record, authors)
