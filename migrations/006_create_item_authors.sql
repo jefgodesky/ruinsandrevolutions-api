@@ -1,0 +1,7 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE IF NOT EXISTS item_authors (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    uid UUID REFERENCES users (id) ON DELETE CASCADE,
+    iid UUID REFERENCES items (id) ON DELETE CASCADE
+);
