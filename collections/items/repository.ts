@@ -1,4 +1,5 @@
-import type ItemRecord from '../../types/item-record.ts'
+import * as uuid from '@std/uuid'
+import ItemRecord, { type ItemRecordWithAuthors } from '../../types/item-record.ts'
 import type User from '../../types/user.ts'
 import DB from '../../DB.ts'
 
@@ -21,5 +22,33 @@ export default class ItemRepository {
     }
 
     return saved
+  }
+
+  async get (id: string): Promise<ItemRecordWithAuthors | null> {
+    if (!uuid.v4.validate(id)) return null
+    return await this.getByUniqueField('i.id = $1', [id])
+  }
+
+  private async getByUniqueField (
+    where: string,
+    params: string[]
+  ): Promise<ItemRecordWithAuthors | null> {
+    const query = `
+      SELECT 
+        i.*, 
+        COALESCE(
+          jsonb_agg(jsonb_build_object('id', u.id, 'name', u.name, 'username', u.username))
+          FILTER (WHERE u.id IS NOT NULL AND r.role = 'listed'), '[]'
+        ) AS authors
+      FROM items i
+      LEFT JOIN item_authors ia ON i.id = ia.iid
+      LEFT JOIN users u ON ia.uid = u.id
+      LEFT JOIN roles r ON u.id = r.uid
+      WHERE ${where}
+      GROUP BY i.id
+    `
+
+    const result = await DB.query<ItemRecordWithAuthors>(query, params)
+    return result.rows.length > 0 ? result.rows[0] : null
   }
 }

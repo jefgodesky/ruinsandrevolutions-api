@@ -3,6 +3,8 @@ import { expect } from 'jsr:@std/expect'
 import type User from '../../types/user.ts'
 import ItemRecord, { createItemRecord } from '../../types/item-record.ts'
 import DB from '../../DB.ts'
+import RoleRepository from '../users/roles/repository.ts'
+import setupScales from '../../utils/testing/setup-scales.ts'
 import setupUser from '../../utils/testing/setup-user.ts'
 import ItemRepository from './repository.ts'
 
@@ -41,6 +43,28 @@ describe('ItemRepository', () => {
       await repository.save(createItemRecord({ id: undefined }), authors)
       const authorCheck = await DB.query<{ id: string }>('SELECT id FROM item_authors')
       expect(authorCheck.rowCount).toBe(2)
+    })
+  })
+
+  describe('get', () => {
+    it('returns null if ID is not a UUID', async () => {
+      const actual = await repository.get('nope')
+      expect(actual).toBeNull()
+    })
+
+    it('returns a single item by ID', async () => {
+      const { scales } = await setupScales(1)
+      const actual = await repository.get(scales[0].id!)
+      expect(actual?.id).toBe(scales[0].id)
+      expect(actual?.authors).toHaveLength(1)
+    })
+
+    it('does not include unlisted authors', async () => {
+      const { scales } = await setupScales(1)
+      const roles = new RoleRepository()
+      await roles.revoke(scales[0].authors[0].id!, 'listed')
+      const actual = await repository.get(scales[0].id!)
+      expect(actual?.authors).toHaveLength(0)
     })
   })
 })
