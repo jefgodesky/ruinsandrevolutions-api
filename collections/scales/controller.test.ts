@@ -12,6 +12,7 @@ import type UserResource from '../../types/user-resource.ts'
 import DB from '../../DB.ts'
 import { createFields } from '../../types/fields.ts'
 import { createScale } from '../../types/scale.ts'
+import setupScales from '../../utils/testing/setup-scales.ts'
 import setupUser from '../../utils/testing/setup-user.ts'
 import stringToReadableStream from '../../utils/transformers/string-to/readable-stream.ts'
 import getAllFieldCombinations from '../../utils/testing/get-all-field-combinations.ts'
@@ -139,6 +140,63 @@ describe('ScaleController', () => {
           }
         }
       }
+    })
+  })
+
+  describe('list', () => {
+    it('shows your scales', async () => {
+      const { user, scales } = await setupScales(3)
+      const ctx = createMockContext({ state: { client: user } })
+      await ScaleController.list(ctx)
+      const data = (ctx.response.body as Response)?.data as ScaleResource[]
+
+      expect(ctx.response.status).toBe(200)
+      expect(data).toHaveLength(3)
+      for (const [index, expected] of scales.reverse().entries()) {
+        expect(data[index].type).toBe('scales')
+        expect(data[index].id).toBe(expected.id)
+        expect(data[index].attributes).toHaveProperty('name', expected.name)
+      }
+    })
+
+    it('can be sorted', async () => {
+      const { user } = await setupScales(3, ['C', 'A', 'B'])
+      const ctx = createMockContext({ state: { client: user } })
+      const url = new URL('http://localhost:8001/v1/tasks?sort=name')
+      await ScaleController.list(ctx, url)
+      const data = (ctx.response.body as Response)?.data as ScaleResource[]
+
+      expect(ctx.response.status).toBe(200)
+      expect(data).toHaveLength(3)
+      expect(data[0].attributes).toHaveProperty('name', 'A')
+      expect(data[1].attributes).toHaveProperty('name', 'B')
+      expect(data[2].attributes).toHaveProperty('name', 'C')
+    })
+
+    it('can be filtered', async () => {
+      const { user } = await setupScales(3, ['C', 'A', 'B'])
+      const ctx = createMockContext({ state: { client: user } })
+      const url = new URL('http://localhost:8001/v1/tasks?filter[name]=A')
+      await ScaleController.list(ctx, url)
+      const data = (ctx.response.body as Response)?.data as ScaleResource[]
+
+      expect(ctx.response.status).toBe(200)
+      expect(data).toHaveLength(1)
+    })
+
+    it('paginates results', async () => {
+      const total = 5
+      const limit = 3
+      const { user } = await setupScales(total)
+      const ctx = createMockContext({ state: { client: user } })
+      const url = new URL(`http://localhost:8001/v1/tasks?limit=${limit}&offset=1`)
+      await ScaleController.list(ctx, url)
+      const data = (ctx.response.body as Response)?.data as ScaleResource[]
+
+      expect(data).toHaveLength(limit)
+      expect(data[0].attributes).toHaveProperty('slug', 'scale-04')
+      expect(data[1].attributes).toHaveProperty('slug', 'scale-03')
+      expect(data[2].attributes).toHaveProperty('slug', 'scale-02')
     })
   })
 })
