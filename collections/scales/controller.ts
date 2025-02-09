@@ -1,7 +1,9 @@
 import { Context, Status, createHttpError } from '@oak/oak'
 import type ScaleCreation from '../../types/scale-creation.ts'
+import type ScalePatch from '../../types/scale-patch.ts'
 import urlToFields from '../../utils/transformers/url-to/fields.ts'
 import ScaleRepository from './repository.ts'
+import patchScale from '../../utils/patching/scale.ts'
 import sendJSON from '../../utils/send-json.ts'
 import urlToItemSorting from '../../utils/transformers/url-to/item-sorting.ts'
 import urlToItemFiltering from '../../utils/transformers/url-to/item-filtering.ts'
@@ -48,6 +50,17 @@ class ScaleController {
     const where = query.length > 0 ? query : undefined
     const { total, rows } = await ScaleController.getRepository().list(limit, offset, where, sort, params)
     const res = scalesToScalePageResponse(rows, total, offset ?? 0, limit, fields)
+    sendJSON(ctx, res)
+  }
+
+  static async update (ctx: Context, url?: URL) {
+    const src = url ?? ctx.request.url
+    const fields = urlToFields(src)
+    const patch = await ctx.request.body.json() as ScalePatch
+    const patched = patchScale(ctx.state.scale, patch)
+    const updated = await ScaleController.getRepository().update(patched)
+    if (updated === null) throw createHttpError(Status.InternalServerError)
+    const res = scaleToScaleResponse(updated, fields)
     sendJSON(ctx, res)
   }
 }

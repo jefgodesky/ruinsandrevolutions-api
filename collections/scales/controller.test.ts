@@ -1,11 +1,14 @@
 import { describe, beforeEach, afterEach, afterAll, it } from '@std/testing/bdd'
 import { expect } from '@std/expect'
+import { type Context } from '@oak/oak'
 import { createMockContext } from '@oak/oak/testing'
 import type Resource from '../../types/resource.ts'
 import type Response from '../../types/response.ts'
+import type Scale from '../../types/scale.ts'
 import ScaleAttributes, { createScaleAttributes } from '../../types/scale-attributes.ts'
 import ScaleCreation, { createScaleCreation } from '../../types/scale-creation.ts'
 import type ScaleResource from '../../types/scale-resource.ts'
+import type ScalePatch from '../../types/scale-patch.ts'
 import User, { createUser } from '../../types/user.ts'
 import UserAttributes, { createUserAttributes } from '../../types/user-attributes.ts'
 import type UserResource from '../../types/user-resource.ts'
@@ -197,6 +200,66 @@ describe('ScaleController', () => {
       expect(data[0].attributes).toHaveProperty('slug', 'scale-04')
       expect(data[1].attributes).toHaveProperty('slug', 'scale-03')
       expect(data[2].attributes).toHaveProperty('slug', 'scale-02')
+    })
+  })
+
+  describe('update', () => {
+    let ctx: Context
+    let scale: Scale
+    let patch: ScalePatch
+    const attributes = createScaleAttributes()
+    const updatedName = 'Updated Scale'
+    const updatedLevels = ['X', 'Y', 'Z']
+
+    beforeEach(async () => {
+      const { scales } = await setupScales(1)
+      scale = scales[0]
+      patch = {
+        data: {
+          type: 'scales',
+          id: scale.id ?? 'ERROR',
+          attributes: {
+            name: updatedName,
+            levels: updatedLevels
+          }
+        }
+      }
+
+      ctx = createMockContext({
+        state: { scale },
+        body: stringToReadableStream(JSON.stringify(patch))
+      })
+    })
+
+    it('updates the scale', async () => {
+      await ScaleController.update(ctx)
+      const data = (ctx.response.body as Response)?.data as ScaleResource
+      const untouchedFields = ['slug', 'description', 'body', 'notes'] as (keyof ScaleAttributes)[]
+
+      expect(ctx.response.status).toBe(200)
+      expect(data).toBeDefined()
+      expect(data.type).toBe('scales')
+      expect(data.attributes).toHaveProperty('name', updatedName)
+      expect(data.attributes?.levels).toEqual(updatedLevels)
+      for (const field of untouchedFields) {
+        expect((data.attributes as ScaleAttributes)[field]).toBe(scale[field])
+      }
+    })
+
+    it('returns a sparse fieldset', async () => {
+      const objects = getAllFieldCombinations(attributes)
+      for (const object of objects) {
+        const fields = Object.keys(object) as (keyof ScaleAttributes)[]
+        const url = new URL(`${getRoot()}/scales/${scale.id}?fields[scales]=${fields.join(',')}`)
+        await ScaleController.update(ctx, url)
+        const data = (ctx.response.body as Response)?.data as ScaleResource
+        const receivedAttributes = data.attributes as ScaleAttributes
+
+        expect(ctx.response.status).toBe(200)
+        for (const field of fields) {
+          expect(receivedAttributes[field] === undefined).toEqual(object[field] === undefined)
+        }
+      }
     })
   })
 })
