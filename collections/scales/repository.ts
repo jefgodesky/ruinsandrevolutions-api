@@ -17,4 +17,11 @@ export default class ScaleRepository {
       ? null
       : itemRecordAndAuthorsToScale(record, authors)
   }
+
+  async get (id: string): Promise<Scale | null> {
+    const repository = new ItemRepository()
+    const record = await repository.getByIdOrSlug('scale', id)
+    if (record === null) return null
+    return itemRecordAndAuthorsToScale(record, record.authors)
+  }
 }
