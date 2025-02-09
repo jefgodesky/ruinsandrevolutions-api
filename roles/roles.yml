@@ -3,6 +3,7 @@ default:
   - listed
 roles:
   anonymous:
+    - scale:read
     - user:read
   active:
     - scale:create

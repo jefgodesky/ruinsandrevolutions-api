@@ -6,6 +6,18 @@
 
 With this, a user has permission to create a new scale.
 
+### `scale:read`
+
+With this, a user has permission to view any scale.
+
+### `scale:author:read`
+
+With this, a user has permission to view any scale that she is
+an author of. Note that a user who has `scale:read` can also view
+scales that she has authored, even if she does not have
+`scale:author:read`. This is  only meaningful for users who do
+not have `scale:read`.
+
 ## Users
 
 ### `user:read`
