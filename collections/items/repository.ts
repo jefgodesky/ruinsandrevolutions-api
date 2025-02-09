@@ -2,6 +2,10 @@ import * as uuid from '@std/uuid'
 import ItemRecord, { type ItemRecordWithAuthors, type ItemType } from '../../types/item-record.ts'
 import type User from '../../types/user.ts'
 import DB from '../../DB.ts'
+import getEnvNumber from '../../utils/get-env-number.ts'
+
+const MAX_PAGE_SIZE = getEnvNumber('MAX_PAGE_SIZE', 100)
+const DEFAULT_PAGE_SIZE = getEnvNumber('DEFAULT_PAGE_SIZE', 10)
 
 export default class ItemRepository {
   async save (record: ItemRecord, authors: User[]): Promise<ItemRecord | null> {
@@ -36,6 +40,41 @@ export default class ItemRepository {
   async getByIdOrSlug (itemType: ItemType, id: string): Promise<ItemRecordWithAuthors | null> {
     if (uuid.v4.validate(id)) return await this.get(id)
     return await this.getBySlug(itemType, id)
+  }
+
+  async list (
+    limit: number = DEFAULT_PAGE_SIZE,
+    offset: number = 0,
+    where: string = 'TRUE',
+    sort: string = 'i.updated DESC',
+    params: string[] = []
+  ): Promise<{ total: number, rows: ItemRecordWithAuthors[] }> {
+    limit = Math.min(limit, MAX_PAGE_SIZE)
+
+    const query = `
+      WITH paginated_items AS (
+        SELECT 
+          i.*, 
+          COUNT(*) OVER () AS total,
+          COALESCE(
+            jsonb_agg(jsonb_build_object('id', u.id, 'name', u.name, 'username', u.username))
+            FILTER (WHERE u.id IS NOT NULL AND r.role = 'listed'), '[]'
+          ) AS authors
+        FROM items i
+        LEFT JOIN item_authors ia ON i.id = ia.iid
+        LEFT JOIN users u ON ia.uid = u.id
+        LEFT JOIN roles r ON u.id = r.uid
+        WHERE ${where}
+        GROUP BY i.id
+        ORDER BY ${sort}
+        LIMIT $${params.length + 1} OFFSET $${params.length + 2}
+      )
+      SELECT * FROM paginated_items;
+    `
+
+    const result = await DB.query<ItemRecordWithAuthors & { total: number }>(query, [...params, limit, offset])
+    const total = result.rows.length > 0 ? Number(result.rows[0].total) : 0
+    return { total, rows: result.rows }
   }
 
   private async getByUniqueField (
