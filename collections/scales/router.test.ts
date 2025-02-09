@@ -63,6 +63,19 @@ describe('/scales', () => {
         expect(res.body.data.relationships.authors.data[0].id).toBe(user.id)
       })
     })
+
+    describe('GET', () => {
+      it('returns a paginated list of scales', async () => {
+        await setupScales(5)
+        const res = await supertest(getSupertestRoot())
+          .get(`/scales?limit=2&offset=1`)
+
+        expect(res.status).toBe(200)
+        expect(res.body.data).toHaveLength(2)
+        expect(res.body.data[0].attributes).toHaveProperty('slug', 'scale-04')
+        expect(res.body.data[1].attributes).toHaveProperty('slug', 'scale-03')
+      })
+    })
   })
 
   describe('Resource [/scales/:scaleId]', () => {

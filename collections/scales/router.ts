@@ -25,6 +25,12 @@ router.post('/',
     await ScaleController.create(ctx)
   })
 
+router.get('/',
+  requirePermissions('scale:read'),
+  async ctx => {
+    await ScaleController.list(ctx)
+  })
+
 router.get('/:scaleId',
   loadScale,
   requireScale,

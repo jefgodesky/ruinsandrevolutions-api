@@ -96,6 +96,22 @@ ScaleResponse:
       type: array
       items:
         $ref: "../../users/docs/schemas.yml#/IncludedUser"
+ScalesResponse:
+  description: A JSON:API response that returns a paginated list of scales.
+  type: object
+  properties:
+    jsonapi:
+      $ref: "../../../docs/schemas.yml#/JSONAPIHeader"
+    links:
+      $ref: "../../../docs/schemas.yml#/PaginatedLinks"
+    data:
+      type: array
+      items:
+        $ref: "#/ScaleResource"
+    included:
+      type: array
+      items:
+        $ref: "../../users/docs/schemas.yml#/IncludedUser"
 ScaleCreation:
   description: The object that a client must provide to create a new scale.
   type: object
