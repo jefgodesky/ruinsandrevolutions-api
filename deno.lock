@@ -32,6 +32,7 @@
     "jsr:@std/uuid@^1.0.4": "1.0.4",
     "jsr:@std/yaml@^1.0.5": "1.0.5",
     "jsr:@stdext/crypto@^0.0.6": "0.0.6",
+    "jsr:@tolu/iso8601-duration@^2.1.2": "2.1.2",
     "npm:@types/node@*": "22.5.4",
     "npm:@types/supertest@^6.0.2": "6.0.2",
     "npm:path-to-regexp@6.2.1": "6.2.1",
@@ -166,6 +167,9 @@
       "dependencies": [
         "jsr:@std/encoding@1"
       ]
+    },
+    "@tolu/iso8601-duration@2.1.2": {
+      "integrity": "2278bd9260b0c25243a642a26d2d1948f9a260d4500bed0fbbabdf6676ab282c"
     }
   },
   "npm": {
@@ -782,6 +786,7 @@
       "jsr:@std/uuid@^1.0.4",
       "jsr:@std/yaml@^1.0.5",
       "jsr:@stdext/crypto@^0.0.6",
+      "jsr:@tolu/iso8601-duration@^2.1.2",
       "npm:@types/supertest@^6.0.2",
       "npm:supertest@7",
       "npm:swagger-cli@^4.0.4"
