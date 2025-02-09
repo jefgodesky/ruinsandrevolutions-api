@@ -2,6 +2,8 @@ import { describe, beforeEach, afterEach, afterAll, it } from '@std/testing/bdd'
 import { expect } from '@std/expect'
 import supertest from 'supertest'
 import type Scale from '../../types/scale.ts'
+import type ScaleAttributes from '../../types/scale-attributes.ts'
+import type ScalePatch from '../../types/scale-patch.ts'
 import type User from '../../types/user.ts'
 import DB from '../../DB.ts'
 import { createScaleCreation } from '../../types/scale-creation.ts'
@@ -109,6 +111,109 @@ describe('/scales', () => {
           expect(res.body.included[0].type).toBe('users')
           expect(res.body.included[0].id).toBe(user.id)
           expect(res.body.included[0].attributes.name).toBe(user.name)
+        }
+      })
+    })
+
+    describe('PATCH', () => {
+      let patch: ScalePatch
+      const updatedName = 'Updated Scale'
+      const updatedLevels = ['X', 'Y', 'Z']
+
+      beforeEach(() => {
+        patch = {
+          data: {
+            type: 'scales',
+            id: scale.id ?? 'ERROR',
+            attributes: {
+              name: updatedName,
+              levels: updatedLevels
+            }
+          }
+        }
+      })
+
+      it('returns 400 if not given a valid ScalePatch', async () => {
+        const ids = [scale.id, scale.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/scales/${id}`)
+            .set({
+              Authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send({ a: 1 })
+
+          expect(res.status).toBe(400)
+        }
+      })
+
+      it('returns 401 if not authenticated', async () => {
+        const ids = [scale.id, scale.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/scales/${id}`)
+            .set({
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send(patch)
+
+          expect(res.status).toBe(401)
+        }
+      })
+
+      it('returns 403 if authenticated without permission', async () => {
+        const { jwt } = await setupUser({ createAccount: false })
+        const ids = [scale.id, scale.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/scales/${id}`)
+            .set({
+              Authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send(patch)
+
+          expect(res.status).toBe(403)
+        }
+      })
+
+      it('returns 404 if no scale has that ID or slug', async () => {
+        const ids = [crypto.randomUUID(), 'nope']
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/scales/${id}`)
+            .set({
+              Authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send(patch)
+
+          expect(res.status).toBe(404)
+        }
+      })
+
+      it('patches a scale', async () => {
+        const ids = [scale.id, scale.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/scales/${id}`)
+            .set({
+              Authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send(patch)
+
+          const untouchedFields = ['slug', 'description', 'body', 'attribution'] as (keyof ScaleAttributes)[]
+
+          expect(res.status).toBe(200)
+          expect(res.body.data.type).toBe('scales')
+          expect(res.body.data.id).toBe(scale.id)
+          expect(res.body.data.attributes.name).toBe(updatedName)
+          expect(res.body.data.attributes.levels).toEqual(updatedLevels)
+          for (const field of untouchedFields) {
+            expect(res.body.data.attributes[field]).toBe(scale[field])
+          }
         }
       })
     })

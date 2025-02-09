@@ -8,6 +8,7 @@ import requireClient from '../../middlewares/require/client.ts'
 import requireItemCreation from '../../middlewares/require/resources/item-creation.ts'
 import requirePermissions from '../../middlewares/require/permissions.ts'
 import requireScale from '../../middlewares/require/resources/scale.ts'
+import requireScalePatchBody from '../../middlewares/require/body/scale-patch.ts'
 import getPrefix from '../../utils/get-prefix.ts'
 
 const router = new Router({
@@ -26,6 +27,7 @@ router.post('/',
   })
 
 router.get('/',
+  loadClient,
   requirePermissions('scale:read'),
   async ctx => {
     await ScaleController.list(ctx)
@@ -34,9 +36,21 @@ router.get('/',
 router.get('/:scaleId',
   loadScale,
   requireScale,
+  loadClient,
   requirePermissions('scale:read'),
   ctx => {
     ScaleController.get(ctx)
+  })
+
+router.patch('/:scaleId',
+  requireScalePatchBody,
+  loadScale,
+  loadClient,
+  requireScale,
+  requireClient,
+  requirePermissions('scale:update'),
+  async ctx => {
+    await ScaleController.update(ctx)
   })
 
 export default router

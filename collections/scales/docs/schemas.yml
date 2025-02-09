@@ -182,6 +182,59 @@ ScaleCreation:
                         example: users
                       id:
                         $ref: "../../../docs/schemas.yml#/UUID"
+ScalePatch:
+  description: The object that a client must provide to update a scale.
+  type: object
+  required: [data]
+  properties:
+    data:
+      type: object
+      required: [type, id, attributes]
+      properties:
+        type:
+          type: string
+          example: "scales"
+        id:
+          $ref: "#/ScaleID"
+        attributes:
+          description: The fields associated with a scale.
+          type: object
+          properties:
+            slug:
+              type: string
+              description: A slugified string that uniquely identifies this scale.
+              pattern: '^[a-z0-9-]+$'
+              example: attitude
+            name:
+              type: string
+              description: The name of this scale.
+              example: Attitude
+            description:
+              type: string
+              description: A short description of this scale.
+              example: A scale of attitudes that one character may have towards another.
+            notes:
+              type: string
+              description: Longer text to more fully explain how the scale works. This can include Markdown.
+            attribution:
+              type: string
+              description: |
+                When you submit a scale using this endpoint, you’re agreeing to share
+                it under a CC-BY-SA 4.0 International License. With this field, you can
+                include any necessary attributions from other CC-BY-SA-licensed works
+                that you have built on. Anyone who builds on this scale should include
+                everything in this attribution field _plus_ an attribution to you.
+            levels:
+              type: array
+              items:
+                type: string
+              description: The levels of the scale, in order. Each level can be as long or short as it needs to be. You can use Markdown.
+              example:
+                - Hostile
+                - Antagonistic
+                - Indifferent
+                - Friendly
+                - Loyal
 ScaleID:
   name: scaleId
   in: path

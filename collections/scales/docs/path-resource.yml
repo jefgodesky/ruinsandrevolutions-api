@@ -17,3 +17,42 @@ get:
             $ref: "./schemas.yml#/ScaleResponse"
     404:
       description: The requested scale could not be found.
+patch:
+  tags:
+    - Scales
+  summary: Update a scale
+  description: |
+    This endpoint allows any of a scale’s authors to update that scale.
+    This is a patch operation, so any fields not specified will remain as
+    they were.
+  operationId: updateScale
+  parameters:
+    - $ref: "./schemas.yml#/ScaleID"
+    - $ref: "./schemas.yml#/ScaleFields"
+    - $ref: "../../users/docs/schemas.yml#/UserFields"
+  security:
+    - bearerAuth: [ ]
+  requestBody:
+    description: Update a scale
+    content:
+      application/json:
+        schema:
+          $ref: "./schemas.yml#/ScalePatch"
+  responses:
+    200:
+      description: The updated scale.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yml#/ScaleResponse"
+    400:
+      description: |
+        If you're receiving this error response, the most likely cause
+        is sending something other than a `ScaleCreation` body.
+    401:
+      description: Only authenticated users can create scales.
+    403:
+      description: You cannot update a scale unless you are one of its authors.
+    404:
+      description: The requested scale could not be found.
+
