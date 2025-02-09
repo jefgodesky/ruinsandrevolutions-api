@@ -97,4 +97,15 @@ describe('ScaleRepository', () => {
       expect(p2.rows.map((scale: Scale) => scale.id!)).toEqual([scales[scales.length - 2].id])
     })
   })
+
+  describe('update', () => {
+    const updatedName = 'Updated Scale'
+
+    it('updates an item', async () => {
+      const { scales } = await setupScales(1)
+      scales[0].name = updatedName
+      const actual = await repository.update(scales[0])
+      expect(actual?.name).toBe(updatedName)
+    })
+  })
 })

@@ -2,6 +2,7 @@ import type Scale from '../../types/scale.ts'
 import type ScaleCreation from '../../types/scale-creation.ts'
 import type User from '../../types/user.ts'
 import ItemRepository from '../items/repository.ts'
+import scaleToItemRecord from '../../utils/transformers/scale-to/item-record.ts'
 import scaleCreationToItemRecord from '../../utils/transformers/scale-creation-to/item-record.ts'
 import itemRecordAndAuthorsToScale from '../../utils/transformers/item-record-and-authors-to/scale.ts'
 import getEnvNumber from '../../utils/get-env-number.ts'
@@ -39,5 +40,13 @@ export default class ScaleRepository {
     const { total, rows } = await repository.list(limit, offset, where, sort, params)
     const scales = rows.map(row => itemRecordAndAuthorsToScale(row, row.authors))
     return { total, rows: scales }
+  }
+
+  async update (scale: Scale): Promise<Scale | null> {
+    if (!scale.id) return null
+    const repository = new ItemRepository()
+    const res = await repository.update(scaleToItemRecord(scale))
+    if (res === null) return null
+    return await this.get(scale.id)
   }
 }
