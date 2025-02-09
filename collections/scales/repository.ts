@@ -4,6 +4,9 @@ import type User from '../../types/user.ts'
 import ItemRepository from '../items/repository.ts'
 import scaleCreationToItemRecord from '../../utils/transformers/scale-creation-to/item-record.ts'
 import itemRecordAndAuthorsToScale from '../../utils/transformers/item-record-and-authors-to/scale.ts'
+import getEnvNumber from '../../utils/get-env-number.ts'
+
+const DEFAULT_PAGE_SIZE = getEnvNumber('DEFAULT_PAGE_SIZE', 10)
 
 export default class ScaleRepository {
   async create (post: ScaleCreation): Promise<Scale | null> {
@@ -23,5 +26,18 @@ export default class ScaleRepository {
     const record = await repository.getByIdOrSlug('scale', id)
     if (record === null) return null
     return itemRecordAndAuthorsToScale(record, record.authors)
+  }
+
+  async list (
+    limit: number = DEFAULT_PAGE_SIZE,
+    offset: number = 0,
+    where: string = 'TRUE',
+    sort: string = 'i.updated DESC',
+    params: string[] = []
+  ): Promise<{ total: number, rows: Scale[] }> {
+    const repository = new ItemRepository()
+    const { total, rows } = await repository.list(limit, offset, where, sort, params)
+    const scales = rows.map(row => itemRecordAndAuthorsToScale(row, row.authors))
+    return { total, rows: scales }
   }
 }

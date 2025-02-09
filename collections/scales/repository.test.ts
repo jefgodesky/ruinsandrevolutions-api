@@ -1,7 +1,7 @@
 import { describe, beforeAll, beforeEach, afterAll, afterEach, it } from 'jsr:@std/testing/bdd'
 import { expect } from 'jsr:@std/expect'
 import type User from '../../types/user.ts'
-import { isScale } from '../../types/scale.ts'
+import Scale, { isScale } from '../../types/scale.ts'
 import { createScaleCreation } from '../../types/scale-creation.ts'
 import ItemRecord from '../../types/item-record.ts'
 import DB from '../../DB.ts'
@@ -69,6 +69,32 @@ describe('ScaleRepository', () => {
       const { scales } = await setupScales(1)
       const actual = await repository.get(scales[0].slug!)
       expect(actual?.id).toBe(scales[0].id)
+    })
+  })
+
+  describe('list', () => {
+    it('returns an empty list if there are no scales', async () => {
+      const actual = await repository.list()
+      expect(actual).toEqual({ total: 0, rows: [] })
+    })
+
+    it('returns all existing scales', async () => {
+      await setupScales(3)
+      const actual = await repository.list()
+      expect(actual.total).toBe(3)
+      expect(actual.rows).toHaveLength(3)
+    })
+
+    it('paginates results', async () => {
+      const { scales } = await setupScales(3)
+      const p1 = await repository.list(1, 0)
+      const p2 = await repository.list(1, 1)
+
+      expect(p1.total).toBe(3)
+      expect(p1.rows.map((scale: Scale) => scale.id!)).toEqual([scales[scales.length - 1].id])
+
+      expect(p2.total).toBe(3)
+      expect(p2.rows.map((scale: Scale) => scale.id!)).toEqual([scales[scales.length - 2].id])
     })
   })
 })
