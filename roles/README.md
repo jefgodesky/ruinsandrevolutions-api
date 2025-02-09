@@ -10,6 +10,10 @@ With this, a user has permission to create a new scale.
 
 With this, a user has permission to view any scale.
 
+### `scale:update`
+
+With this, a user has permission to update any scale.
+
 ### `scale:author:read`
 
 With this, a user has permission to view any scale that she is
@@ -17,6 +21,14 @@ an author of. Note that a user who has `scale:read` can also view
 scales that she has authored, even if she does not have
 `scale:author:read`. This is  only meaningful for users who do
 not have `scale:read`.
+
+### `scale:author:updated`
+
+With this, a user has permission to make changes to any scale that
+she is an author of. Note that a user who has `scale:update` can
+also make changes to scales that she has authored, even if she does
+not have `scale:author:update`. This is  only meaningful for users
+who do not have `scale:update`.
 
 ## Users
 

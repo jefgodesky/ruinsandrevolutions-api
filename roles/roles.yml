@@ -7,6 +7,7 @@ roles:
     - user:read
   active:
     - scale:create
+    - scale:author:update
     - user:self:update
     - user:self:destroy
     - role:self:listed:grant
