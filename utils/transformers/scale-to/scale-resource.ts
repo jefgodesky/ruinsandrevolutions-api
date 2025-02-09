@@ -1,7 +1,6 @@
 import type Fields from '../../../types/fields.ts'
 import type Scale from '../../../types/scale.ts'
 import type ScaleResource from '../../../types/scale-resource.ts'
-import scaleToLink from './link.ts'
 import scaleToScaleAttributes from './scale-attributes.ts'
 
 const scaleToScaleResource = (scale: Scale, fields?: Fields): ScaleResource => {
@@ -12,9 +11,6 @@ const scaleToScaleResource = (scale: Scale, fields?: Fields): ScaleResource => {
     attributes: scaleToScaleAttributes(scale, fields),
     relationships: {
       authors: {
-        links: {
-          self: `${scaleToLink(scale)}/relationships/authors`
-        },
         data: scale.authors.map(author => ({ type: 'users', id: author.id ?? 'ERROR' }))
       }
     }

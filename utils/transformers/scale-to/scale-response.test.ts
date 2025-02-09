@@ -33,9 +33,6 @@ describe('scaleToScaleResponse', () => {
         attributes,
         relationships: {
           authors: {
-            links: {
-              self: `${getRoot()}/scales/${scale.slug}/relationships/authors`
-            },
             data: [
               {
                 type: 'users',
