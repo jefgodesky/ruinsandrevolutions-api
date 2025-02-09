@@ -98,3 +98,19 @@ UserFields:
     bothExample:
       summary: Name and username
       value: name,username
+IncludedUser:
+  type: object
+  properties:
+    links:
+      type: object
+      properties:
+        self:
+          type: string
+          description: The endpoint for this user.
+    type:
+      type: string
+      example: users
+    id:
+      $ref: "../../../docs/schemas.yml#/UUID"
+    attributes:
+      $ref: "#/UserAttributes"

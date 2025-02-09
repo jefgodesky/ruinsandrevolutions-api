@@ -16,6 +16,8 @@ info:
 servers:
   - url: https://api.ruinsandrevolutions.com/v1/
 tags:
+  - name: Scales
+    description: Operations related to scales.
   - name: Users
     description: Operations related to users and user records.
   - name: Authentication
@@ -31,6 +33,8 @@ paths:
     $ref: "../collections/auth/tokens/docs/path-collection.yml"
   /auth/providers:
     $ref: "../collections/auth/providers/docs/path-collection.yml"
+  /scales:
+    $ref: "../collections/scales/docs/path-collection.yml"
   /users/{userId}:
     $ref: "../collections/users/docs/path-resource.yml"
   /users/{userId}/roles/{role}:

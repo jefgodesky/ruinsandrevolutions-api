@@ -4,6 +4,7 @@ import DB from './DB.ts'
 
 import AccountRouter from './collections/accounts/router.ts'
 import AuthRouter from './collections/auth/router.ts'
+import ScaleRouter from './collections/scales/router.ts'
 import UserRouter from './collections/users/router.ts'
 
 import loadRouteParams from './middlewares/load/route-params.ts'
@@ -18,6 +19,7 @@ const api = new Application()
 const routers: Record<string, Router> = {
   accounts: AccountRouter,
   auth: AuthRouter.router,
+  scales: ScaleRouter,
   users: UserRouter
 }
 
