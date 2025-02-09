@@ -1,16 +1,22 @@
 import { describe, beforeEach, afterEach, afterAll, it } from '@std/testing/bdd'
 import { expect } from '@std/expect'
 import { createMockContext } from '@oak/oak/testing'
+import type Resource from '../../types/resource.ts'
 import type Response from '../../types/response.ts'
-import type ScaleAttributes from '../../types/scale-attributes.ts'
+import ScaleAttributes, { createScaleAttributes } from '../../types/scale-attributes.ts'
+import ScaleCreation, { createScaleCreation } from '../../types/scale-creation.ts'
 import type ScaleResource from '../../types/scale-resource.ts'
-import type User from '../../types/user.ts'
+import User, { createUser } from '../../types/user.ts'
+import UserAttributes, { createUserAttributes } from '../../types/user-attributes.ts'
+import type UserResource from '../../types/user-resource.ts'
 import DB from '../../DB.ts'
-import { createScaleCreation } from '../../types/scale-creation.ts'
+import { createFields } from '../../types/fields.ts'
+import { createScale } from '../../types/scale.ts'
 import setupUser from '../../utils/testing/setup-user.ts'
 import stringToReadableStream from '../../utils/transformers/string-to/readable-stream.ts'
+import getAllFieldCombinations from '../../utils/testing/get-all-field-combinations.ts'
+import getRoot from '../../utils/get-root.ts'
 import ScaleController from './controller.ts'
-import UserResource from '../../types/user-resource.ts'
 
 describe('ScaleController', () => {
   let user: User
@@ -23,23 +29,115 @@ describe('ScaleController', () => {
   afterAll(DB.close)
 
   describe('create', () => {
-    it('creates a scale', async () => {
-      const post = createScaleCreation(undefined, [user])
+    const applyCreate = async (post: ScaleCreation, url?: URL): Promise<Response> => {
       const ctx = createMockContext({
         state: { client: user },
         body: stringToReadableStream(JSON.stringify(post))
       })
-      await ScaleController.create(ctx)
-
-      const data = (ctx.response.body as Response)?.data as ScaleResource
-      const attributes = data.attributes as ScaleAttributes
-      const copiedFields: Array<keyof ScaleAttributes> = ['name', 'slug', 'description', 'body', 'attribution']
-
+      await ScaleController.create(ctx, url)
       expect(ctx.response.status).toBe(200)
-      expect(data.relationships?.authors?.data).toHaveLength(1)
-      expect((data.relationships?.authors?.data as UserResource[])[0].id).toBe(user.id)
+      return ctx.response.body as Response
+    }
+
+    it('creates a scale', async () => {
+      const post = createScaleCreation(undefined, [user])
+      const response = await applyCreate(post)
+      const relationships = (response.data as ScaleResource).relationships
+      const attributes = (response.data as ScaleResource).attributes as ScaleAttributes
+      const copiedFields: Array<keyof ScaleAttributes> = ['name', 'description', 'body', 'attribution']
+
+      expect(relationships?.authors?.data).toHaveLength(1)
+      expect((relationships?.authors?.data as UserResource[])[0].id).toBe(user.id)
       for (const field of copiedFields) {
         expect(attributes[field]).toBe(post.data.attributes[field])
+      }
+    })
+
+    it('returns a sparse fieldset', async () => {
+      const objects = getAllFieldCombinations(createScaleAttributes())
+      for (const [index, object] of objects.entries()) {
+        const fields = createFields({ scales: Object.keys(object) as (keyof ScaleAttributes)[] })
+        const url = new URL(`${getRoot()}/scales?fields[scales]=${fields.scales.join(',')}`)
+        const post = createScaleCreation({ slug: `test-${index + 1}` }, [user])
+        const response = await applyCreate(post, url)
+        const data = response.data as ScaleResource
+        const attributes = data.attributes as ScaleAttributes
+
+        for (const field of fields.scales) {
+          const key = field as keyof ScaleAttributes
+          expect(attributes[key] === undefined).toBe(object[key] === undefined)
+        }
+      }
+    })
+
+    it('returns a sparse fieldset (authors)', async () => {
+      const objects = getAllFieldCombinations(createUserAttributes())
+      for (const [index, object] of objects.entries()) {
+        const fields = createFields({ users: Object.keys(object) as (keyof UserAttributes)[] })
+        const url = new URL(`${getRoot()}/scales?fields[users]=${fields.users.join(',')}`)
+        const post = createScaleCreation({ slug: `test-${index + 1}` }, [user])
+        const response = await applyCreate(post, url)
+        const included = response.included as Resource[]
+        const authors = included.filter(item => item.type === 'users') as UserResource[]
+        const authorAttributes = authors.map(author => author.attributes).filter(attr => attr !== undefined)
+
+        for (const author of authorAttributes) {
+          for (const field of fields.users) {
+            expect(author[field] === undefined).toBe(object[field] === undefined)
+          }
+        }
+      }
+    })
+  })
+
+  describe('get', () => {
+    const userAttributes = createUserAttributes()
+    const user = createUser({ ...userAttributes })
+    const attributes = createScaleAttributes()
+    const scale = createScale({ ...attributes, authors: [user] })
+    const ctx = createMockContext({ state: { scale } })
+
+    it('returns the scale', () => {
+      ScaleController.get(ctx)
+      const data = (ctx.response.body as Response)?.data as ScaleResource
+      expect(ctx.response.status).toBe(200)
+      expect(data).toBeDefined()
+      expect(data.type).toBe('scales')
+      expect(data.attributes).toHaveProperty('name', scale.name)
+    })
+
+    it('returns a sparse fieldset', () => {
+      const objects = getAllFieldCombinations(attributes)
+      for (const object of objects) {
+        const fields = Object.keys(object) as (keyof ScaleAttributes)[]
+        const url = new URL(`${getRoot()}/scales/${scale.id}?fields[scales]=${fields.join(',')}`)
+        ScaleController.get(ctx, url)
+        const data = (ctx.response.body as Response)?.data as ScaleResource
+        const receivedAttributes = data.attributes as ScaleAttributes
+
+        expect(ctx.response.status).toBe(200)
+        for (const field of fields) {
+          expect(receivedAttributes[field]).toEqual(object[field])
+        }
+      }
+    })
+
+    it('returns a sparse fieldset (authors)', () => {
+      const objects = getAllFieldCombinations(userAttributes)
+      for (const object of objects) {
+        const fields = Object.keys(object) as (keyof UserAttributes)[]
+        const url = new URL(`${getRoot()}/scales/${scale.id}?fields[users]=${fields.join(',')}`)
+        ScaleController.get(ctx, url)
+        const included = (ctx.response.body as Response)?.included as Resource[]
+        const authors = included.filter(item => item.type === 'users') as UserResource[]
+        const authorAttributes = authors.map(author => author.attributes).filter(attr => attr !== undefined)
+
+        expect(ctx.response.status).toBe(200)
+        for (const author of authorAttributes) {
+          for (const field of fields) {
+            expect(author[field]).toEqual(object[field])
+          }
+        }
       }
     })
   })
