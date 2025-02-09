@@ -67,4 +67,26 @@ describe('ItemRepository', () => {
       expect(actual?.authors).toHaveLength(0)
     })
   })
+
+  describe('getBySlug', () => {
+    it('returns null if slug does not exist', async () => {
+      const actual = await repository.getBySlug('scale', 'nope')
+      expect(actual).toBeNull()
+    })
+
+    it('returns a single item by slug', async () => {
+      const { scales } = await setupScales(1)
+      const actual = await repository.getBySlug('scale', scales[0].slug!)
+      expect(actual?.id).toBe(scales[0].id)
+      expect(actual?.authors).toHaveLength(1)
+    })
+
+    it('does not include unlisted authors', async () => {
+      const { scales } = await setupScales(1)
+      const roles = new RoleRepository()
+      await roles.revoke(scales[0].authors[0].id!, 'listed')
+      const actual = await repository.getBySlug('scale', scales[0].slug!)
+      expect(actual?.authors).toHaveLength(0)
+    })
+  })
 })

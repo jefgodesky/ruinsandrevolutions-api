@@ -1,5 +1,5 @@
 import * as uuid from '@std/uuid'
-import ItemRecord, { type ItemRecordWithAuthors } from '../../types/item-record.ts'
+import ItemRecord, { type ItemRecordWithAuthors, type ItemType } from '../../types/item-record.ts'
 import type User from '../../types/user.ts'
 import DB from '../../DB.ts'
 
@@ -27,6 +27,10 @@ export default class ItemRepository {
   async get (id: string): Promise<ItemRecordWithAuthors | null> {
     if (!uuid.v4.validate(id)) return null
     return await this.getByUniqueField('i.id = $1', [id])
+  }
+
+  async getBySlug (itemType: ItemType, slug: string): Promise<ItemRecordWithAuthors | null> {
+    return await this.getByUniqueField('i.type = $1 AND i.slug = $2', [itemType, slug])
   }
 
   private async getByUniqueField (
