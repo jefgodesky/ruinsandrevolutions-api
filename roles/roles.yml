@@ -5,6 +5,7 @@ roles:
   anonymous:
     - user:read
   active:
+    - scale:create
     - user:self:update
     - user:self:destroy
     - role:self:listed:grant

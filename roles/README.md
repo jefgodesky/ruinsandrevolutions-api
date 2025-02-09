@@ -1,5 +1,11 @@
 # Permissions
 
+## Scales
+
+### `scale:create`
+
+With this, a user has permission to create a new scale.
+
 ## Users
 
 ### `user:read`
