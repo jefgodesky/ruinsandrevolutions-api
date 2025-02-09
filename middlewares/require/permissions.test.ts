@@ -3,8 +3,11 @@ import { expect } from 'jsr:@std/expect'
 import { createMockContext } from '@oak/oak/testing'
 import { HttpError, Status } from '@oak/oak'
 import createNextSpy from '../../utils/testing/create-next-spy.ts'
+import { createScale } from '../../types/scale.ts'
+import { createUser } from '../../types/user.ts'
 import getMessage from '../../utils/get-message.ts'
 import requirePermissions from './permissions.ts'
+import {createScaleCreation} from '../../types/scale-creation.ts'
 
 describe('requirePermissions', () => {
   it('proceeds if user has all necessary permissions', async () => {
@@ -78,6 +81,20 @@ describe('requirePermissions', () => {
 
     const next = createNextSpy()
     const middleware = requirePermissions('role:grant')
+    await middleware(ctx, next)
+    expect(next.calls).toHaveLength(1)
+  })
+
+  it('proceeds if user has relevant item:author permission', async () => {
+    const client = createUser()
+    const scale = createScale({ authors: [client] })
+    const permissions = ['scale:author:read']
+    const ctx = createMockContext({
+      state: { permissions, client, scale }
+    })
+
+    const next = createNextSpy()
+    const middleware = requirePermissions('scale:read')
     await middleware(ctx, next)
     expect(next.calls).toHaveLength(1)
   })

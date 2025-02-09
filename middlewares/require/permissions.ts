@@ -3,6 +3,7 @@ import checkOmniPermission from '../../utils/permissions/omni.ts'
 import checkUserSelfPermission from '../../utils/permissions/user-self.ts'
 import checkRoleSelfPermission from '../../utils/permissions/role-self.ts'
 import checkRoleGrantRevokePermission from '../../utils/permissions/role-grant-revoke.ts'
+import checkItemAuthorPermission from '../../utils/permissions/item-author.ts'
 import checkExplicitPermission from '../../utils/permissions/explicit.ts'
 import getMessage from '../../utils/get-message.ts'
 
@@ -15,6 +16,7 @@ const requirePermissions = (...permissions: string[]): Middleware => {
         checkUserSelfPermission(ctx, permission),
         checkRoleGrantRevokePermission(ctx, permission),
         checkRoleSelfPermission(ctx, permission),
+        checkItemAuthorPermission(ctx, permission),
         checkExplicitPermission(ctx, permission)
       ].some(check => check === true)
     })
