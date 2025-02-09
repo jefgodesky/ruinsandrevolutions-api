@@ -6,9 +6,12 @@ import type User from '../../types/user.ts'
 import DB from '../../DB.ts'
 import { createScaleCreation } from '../../types/scale-creation.ts'
 import getSupertestRoot from '../../utils/testing/get-supertest-root.ts'
+import setupScales from '../../utils/testing/setup-scales.ts'
 import setupUser from '../../utils/testing/setup-user.ts'
 
 describe('/scales', () => {
+  let scales: Scale[]
+  let scale: Scale
   let user: User
   let jwt: string | undefined
 
@@ -58,6 +61,42 @@ describe('/scales', () => {
         expect(res.body.data.id).toBeDefined()
         expect(res.body.data.relationships.authors.data).toHaveLength(1)
         expect(res.body.data.relationships.authors.data[0].id).toBe(user.id)
+      })
+    })
+  })
+
+  describe('Resource [/scales/:scaleId]', () => {
+    beforeEach(async () => {
+      ({ scales, user, jwt } = await setupScales(1))
+      scale = scales[0]
+    })
+
+    describe('GET', () => {
+      it('returns 404 if no scale has that ID or slug', async () => {
+        const ids = [crypto.randomUUID(), 'nope']
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .get(`/scales/${id}`)
+
+          expect(res.status).toBe(404)
+        }
+      })
+
+      it('returns a scale', async () => {
+        const ids = [scale.id, scale.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .get(`/scales/${id}`)
+
+          expect(res.status).toBe(200)
+          expect(res.body.data.type).toBe('scales')
+          expect(res.body.data.id).toBe(scale.id)
+          expect(res.body.data.attributes.name).toBe(scale.name)
+          expect(res.body.data.relationships.authors.data).toHaveLength(scale.authors.length)
+          expect(res.body.included[0].type).toBe('users')
+          expect(res.body.included[0].id).toBe(user.id)
+          expect(res.body.included[0].attributes.name).toBe(user.name)
+        }
       })
     })
   })

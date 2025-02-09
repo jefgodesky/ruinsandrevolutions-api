@@ -1,0 +1,19 @@
+get:
+  tags:
+    - Scales
+  summary: Retrieve a scale
+  description: This endpoint retrieves a scale.
+  operationId: getScale
+  parameters:
+    - $ref: "./schemas.yml#/ScaleID"
+    - $ref: "./schemas.yml#/ScaleFields"
+    - $ref: "../../users/docs/schemas.yml#/UserFields"
+  responses:
+    200:
+      description: The scale requested.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yml#/ScaleResponse"
+    404:
+      description: The requested scale could not be found.

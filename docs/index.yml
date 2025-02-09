@@ -35,6 +35,8 @@ paths:
     $ref: "../collections/auth/providers/docs/path-collection.yml"
   /scales:
     $ref: "../collections/scales/docs/path-collection.yml"
+  /scales/{scaleId}:
+    $ref: "../collections/scales/docs/path-resource.yml"
   /users/{userId}:
     $ref: "../collections/users/docs/path-resource.yml"
   /users/{userId}/roles/{role}:
