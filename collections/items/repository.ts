@@ -33,6 +33,11 @@ export default class ItemRepository {
     return await this.getByUniqueField('i.type = $1 AND i.slug = $2', [itemType, slug])
   }
 
+  async getByIdOrSlug (itemType: ItemType, id: string): Promise<ItemRecordWithAuthors | null> {
+    if (uuid.v4.validate(id)) return await this.get(id)
+    return await this.getBySlug(itemType, id)
+  }
+
   private async getByUniqueField (
     where: string,
     params: string[]

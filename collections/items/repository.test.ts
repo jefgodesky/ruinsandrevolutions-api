@@ -89,4 +89,30 @@ describe('ItemRepository', () => {
       expect(actual?.authors).toHaveLength(0)
     })
   })
+
+  describe('getByIdOrSlug', () => {
+    it('returns null if item does not exist', async () => {
+      const actual = await repository.getByIdOrSlug('scale', crypto.randomUUID())
+      expect(actual).toBeNull()
+    })
+
+    it('returns null if slug does not exist', async () => {
+      const actual = await repository.getByIdOrSlug('scale', 'nope')
+      expect(actual).toBeNull()
+    })
+
+    it('returns a single item by ID', async () => {
+      const { scales } = await setupScales(1)
+      const actual = await repository.getByIdOrSlug('scale', scales[0].id!)
+      expect(actual?.id).toBe(scales[0].id)
+      expect(actual?.authors).toHaveLength(1)
+    })
+
+    it('returns a single item by slug', async () => {
+      const { scales } = await setupScales(1)
+      const actual = await repository.getByIdOrSlug('scale', scales[0].slug!)
+      expect(actual?.id).toBe(scales[0].id)
+      expect(actual?.authors).toHaveLength(1)
+    })
+  })
 })
