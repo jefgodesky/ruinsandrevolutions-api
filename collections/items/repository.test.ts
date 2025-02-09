@@ -6,6 +6,7 @@ import DB from '../../DB.ts'
 import RoleRepository from '../users/roles/repository.ts'
 import setupScales from '../../utils/testing/setup-scales.ts'
 import setupUser from '../../utils/testing/setup-user.ts'
+import scaleToItemRecord from '../../utils/transformers/scale-to/item-record.ts'
 import ItemRepository from './repository.ts'
 
 describe('ItemRepository', () => {
@@ -139,6 +140,31 @@ describe('ItemRepository', () => {
 
       expect(p2.total).toBe(3)
       expect(p2.rows.map((scale: ItemRecordWithAuthors) => scale.id!)).toEqual([scales[scales.length - 2].id])
+    })
+  })
+
+  describe('update', () => {
+    it('returns null if item has no ID', async () => {
+      const { scales } = await setupScales(1)
+      const record = scaleToItemRecord(scales[0])
+      delete record.id
+      const actual = await repository.update(record)
+      expect(actual).toBeNull()
+    })
+
+    it('updates a single item by ID', async () => {
+      const updatedName = 'Updated Scale'
+      const { scales } = await setupScales(1)
+      const record = scaleToItemRecord(scales[0])
+      const id = record.id!
+      record.name = updatedName
+      const actual = await repository.save(record, scales[0].authors)
+      const check = await repository.get(id)
+
+      expect(actual?.id).toBe(id)
+      expect(actual?.name).toBe(updatedName)
+      expect(check).not.toBeNull()
+      expect(check?.name).toBe(actual?.name)
     })
   })
 })

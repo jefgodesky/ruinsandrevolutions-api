@@ -10,7 +10,7 @@ const DEFAULT_PAGE_SIZE = getEnvNumber('DEFAULT_PAGE_SIZE', 10)
 export default class ItemRepository {
   async save (record: ItemRecord, authors: User[]): Promise<ItemRecord | null> {
     if (!record.id) return await this.create(record, authors)
-    return null
+    return await this.update(record)
   }
 
   async create (record: ItemRecord, authors: User[]): Promise<ItemRecord | null> {
@@ -75,6 +75,25 @@ export default class ItemRepository {
     const result = await DB.query<ItemRecordWithAuthors & { total: number }>(query, [...params, limit, offset])
     const total = result.rows.length > 0 ? Number(result.rows[0].total) : 0
     return { total, rows: result.rows }
+  }
+
+  async update (record: ItemRecord): Promise<ItemRecord | null> {
+    const { id, slug, name, description, body, attribution, data } = record
+    if (id === undefined) return null
+    const fieldsObj: Record<string, string | undefined> = { slug, name, description, body, attribution }
+    const params = [JSON.stringify(data), new Date(), id]
+    const fields: string[] = []
+    for (const field in fieldsObj) {
+      if (fieldsObj[field] !== undefined) {
+        fields.push(`${field} = $${params.length + 1}`)
+        params.push(fieldsObj[field])
+      }
+    }
+
+    const query = `UPDATE items SET ${fields.join(', ')}, data = $1, updated = $2 WHERE id = $3  RETURNING *`
+    const result = await DB.query<ItemRecord>(query, params)
+    if (result.warnings.length > 0) return null
+    return result.rows[0]
   }
 
   private async getByUniqueField (
