@@ -5,6 +5,7 @@ import urlToFields from '../../utils/transformers/url-to/fields.ts'
 import ScaleRepository from './repository.ts'
 import patchScale from '../../utils/patching/scale.ts'
 import sendJSON from '../../utils/send-json.ts'
+import sendNoContent from '../../utils/send-no-content.ts'
 import urlToItemSorting from '../../utils/transformers/url-to/item-sorting.ts'
 import urlToItemFiltering from '../../utils/transformers/url-to/item-filtering.ts'
 import scaleToScaleResponse from '../../utils/transformers/scale-to/scale-response.ts'
@@ -62,6 +63,12 @@ class ScaleController {
     if (updated === null) throw createHttpError(Status.InternalServerError)
     const res = scaleToScaleResponse(updated, fields)
     sendJSON(ctx, res)
+  }
+
+  static async delete (ctx: Context) {
+    const { id } = ctx.state.scale
+    await ScaleController.getRepository().delete(id)
+    sendNoContent(ctx)
   }
 }
 

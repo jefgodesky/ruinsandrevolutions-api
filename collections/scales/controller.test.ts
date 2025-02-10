@@ -310,4 +310,14 @@ describe('ScaleController', () => {
       }
     })
   })
+
+  describe('delete', () => {
+    it('deletes the scale', async () => {
+      const { scales } = await setupScales(1)
+      const scale = scales[0]
+      const ctx = createMockContext({ state: { scale } })
+      await ScaleController.delete(ctx)
+      expect(ctx.response.status).toBe(204)
+    })
+  })
 })
