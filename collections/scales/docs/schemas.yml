@@ -229,6 +229,30 @@ ScalePatch:
                 - Indifferent
                 - Friendly
                 - Loyal
+        relationships:
+          type: object
+          description: |
+            If omitted, you can update the scale without changing the
+            authors. If included, it performs a full replacement of
+            the item's authors. Any authors not included in the new
+            list will be removed, and any new authors in the list
+            will be added.
+          properties:
+            authors:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    description: |
+                      Specify each author by her unique ID string.
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: users
+                      id:
+                        $ref: "../../../docs/schemas.yml#/UUID"
 ScaleID:
   name: scaleId
   in: path

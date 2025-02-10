@@ -10,6 +10,7 @@ import { createScaleCreation } from '../../types/scale-creation.ts'
 import getSupertestRoot from '../../utils/testing/get-supertest-root.ts'
 import setupScales from '../../utils/testing/setup-scales.ts'
 import setupUser from '../../utils/testing/setup-user.ts'
+import UserResource from '../../types/user-resource.ts'
 
 describe('/scales', () => {
   let scales: Scale[]
@@ -215,6 +216,54 @@ describe('/scales', () => {
             expect(res.body.data.attributes[field]).toBe(scale[field])
           }
         }
+      })
+
+      it('adds authors', async () => {
+        const { user } = await setupUser({ createAccount: false, createToken: false })
+        const res = await supertest(getSupertestRoot())
+          .patch(`/scales/${scale.id}`)
+          .set({
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/vnd.api+json'
+          })
+          .send({
+            data: {
+              type: 'scales',
+              id: scale.id ?? 'ERROR',
+              attributes: {},
+              relationships: {
+                authors: {
+                  data: [
+                    ...scale.authors.map(author => ({ type: 'users', id: author.id ?? 'ERROR' } as UserResource)),
+                    { type: 'users', id: user.id } as UserResource
+                  ]
+                }
+              }
+            }
+          })
+
+        expect(res.body.data.relationships.authors.data).toHaveLength(2)
+        expect(res.body.included).toHaveLength(2)
+      })
+
+      it('removes authors', async () => {
+        const res = await supertest(getSupertestRoot())
+          .patch(`/scales/${scale.id}`)
+          .set({
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/vnd.api+json'
+          })
+          .send({
+            data: {
+              type: 'scales',
+              id: scale.id ?? 'ERROR',
+              attributes: {},
+              relationships: {authors: {data: []}}
+            }
+          })
+
+        expect(res.body.data.relationships.authors.data).toHaveLength(0)
+        expect(res.body.included).toHaveLength(0)
       })
     })
   })
