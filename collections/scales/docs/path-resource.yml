@@ -50,9 +50,27 @@ patch:
         If you're receiving this error response, the most likely cause
         is sending something other than a `ScaleCreation` body.
     401:
-      description: Only authenticated users can create scales.
+      description: Only authenticated users can update scales.
     403:
       description: You cannot update a scale unless you are one of its authors.
     404:
       description: The requested scale could not be found.
-
+delete:
+  tags:
+    - Scales
+  summary: Delete a scale
+  description: This endpoint allows any of a scale’s authors to delete that scale.
+  operationId: deleteScale
+  parameters:
+    - $ref: "./schemas.yml#/ScaleID"
+  security:
+    - bearerAuth: [ ]
+  responses:
+    204:
+      description: The scale was successfully deleted.
+    401:
+      description: Only authenticated users can delete scales.
+    403:
+      description: You cannot delete a scale unless you are one of its authors.
+    404:
+      description: The requested scale could not be found.

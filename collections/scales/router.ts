@@ -53,4 +53,14 @@ router.patch('/:scaleId',
     await ScaleController.update(ctx)
   })
 
+router.delete('/:scaleId',
+  loadScale,
+  loadClient,
+  requireScale,
+  requireClient,
+  requirePermissions('scale:delete'),
+  async ctx => {
+    await ScaleController.delete(ctx)
+  })
+
 export default router
