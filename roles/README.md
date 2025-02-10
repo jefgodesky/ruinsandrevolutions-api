@@ -14,6 +14,10 @@ With this, a user has permission to view any scale.
 
 With this, a user has permission to update any scale.
 
+### `scale:delete`
+
+With this, a user has permission to delete any scale.
+
 ### `scale:author:read`
 
 With this, a user has permission to view any scale that she is
@@ -22,13 +26,21 @@ scales that she has authored, even if she does not have
 `scale:author:read`. This is  only meaningful for users who do
 not have `scale:read`.
 
-### `scale:author:updated`
+### `scale:author:update`
 
 With this, a user has permission to make changes to any scale that
 she is an author of. Note that a user who has `scale:update` can
 also make changes to scales that she has authored, even if she does
 not have `scale:author:update`. This is  only meaningful for users
 who do not have `scale:update`.
+
+### `scale:author:delete`
+
+With this, a user has permission to delete any scale that
+she is an author of. Note that a user who has `scale:delete` can
+also delete scales that she has authored, even if she does
+not have `scale:author:delete`. This is  only meaningful for users
+who do not have `scale:delete`.
 
 ## Users
 

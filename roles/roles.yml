@@ -8,6 +8,7 @@ roles:
   active:
     - scale:create
     - scale:author:update
+    - scale:author:delete
     - user:self:update
     - user:self:destroy
     - role:self:listed:grant
