@@ -107,5 +107,22 @@ describe('ScaleRepository', () => {
       const actual = await repository.update(scales[0])
       expect(actual?.name).toBe(updatedName)
     })
+
+    it('adds authors', async () => {
+      const { user } = await setupUser({ createAccount: false, createToken: false })
+      const { scales } = await setupScales(1)
+      scales[0].authors.push(user)
+      await repository.update(scales[0])
+      const authorCheck = await DB.query<{ id: string }>('SELECT id FROM item_authors')
+      expect(authorCheck.rowCount).toBe(2)
+    })
+
+    it('removes authors', async () => {
+      const { scales } = await setupScales(1)
+      scales[0].authors = []
+      await repository.update(scales[0])
+      const authorCheck = await DB.query<{ id: string }>('SELECT id FROM item_authors')
+      expect(authorCheck.rowCount).toBe(0)
+    })
   })
 })

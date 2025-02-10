@@ -45,7 +45,7 @@ export default class ScaleRepository {
   async update (scale: Scale): Promise<Scale | null> {
     if (!scale.id) return null
     const repository = new ItemRepository()
-    const res = await repository.update(scaleToItemRecord(scale))
+    const res = await repository.update(scaleToItemRecord(scale), scale.authors)
     if (res === null) return null
     return await this.get(scale.id)
   }
