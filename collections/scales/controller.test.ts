@@ -246,6 +246,54 @@ describe('ScaleController', () => {
       }
     })
 
+    it('adds authors', async () => {
+      const { user } = await setupUser({ createAccount: false, createToken: false })
+      const patch = {
+        data: {
+          type: 'scales',
+          id: scale.id ?? 'ERROR',
+          attributes: {},
+          relationships: {
+            authors: {
+              data: [
+                ...scale.authors.map(author => ({ type: 'users', id: author.id ?? 'ERROR' } as UserResource)),
+                { type: 'users', id: user.id } as UserResource
+              ]
+            }
+          }
+        }
+      }
+
+      ctx = createMockContext({
+        state: { scale },
+        body: stringToReadableStream(JSON.stringify(patch))
+      })
+
+      await ScaleController.update(ctx)
+      const data = (ctx.response.body as Response)?.data as ScaleResource
+      expect(data.relationships?.authors?.data).toHaveLength(2)
+    })
+
+    it('removes authors', async () => {
+      const patch = {
+        data: {
+          type: 'scales',
+          id: scale.id ?? 'ERROR',
+          attributes: {},
+          relationships: { authors: { data: [] } }
+        }
+      }
+
+      ctx = createMockContext({
+        state: { scale },
+        body: stringToReadableStream(JSON.stringify(patch))
+      })
+
+      await ScaleController.update(ctx)
+      const data = (ctx.response.body as Response)?.data as ScaleResource
+      expect(data.relationships?.authors?.data).toHaveLength(0)
+    })
+
     it('returns a sparse fieldset', async () => {
       const objects = getAllFieldCombinations(attributes)
       for (const object of objects) {
