@@ -49,4 +49,9 @@ export default class ScaleRepository {
     if (res === null) return null
     return await this.get(scale.id)
   }
+
+  async delete (id: string): Promise<void> {
+    const repository = new ItemRepository()
+    return await repository.delete(id)
+  }
 }

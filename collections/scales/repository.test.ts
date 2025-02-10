@@ -125,4 +125,14 @@ describe('ScaleRepository', () => {
       expect(authorCheck.rowCount).toBe(0)
     })
   })
+
+  describe('delete', () => {
+    it('deletes the scale', async () => {
+      const { scales } = await setupScales(1)
+      const id = scales[0].id ?? 'ERROR'
+      await repository.delete(id)
+      const check = await repository.get(id)
+      expect(check).toBeNull()
+    })
+  })
 })
