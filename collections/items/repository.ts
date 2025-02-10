@@ -93,6 +93,11 @@ export default class ItemRepository {
     return result.rows[0]
   }
 
+  async delete (id: string): Promise<void> {
+    await DB.query('DELETE FROM item_authors WHERE iid = $1', [id])
+    await DB.query('DELETE FROM items WHERE id = $1', [id])
+  }
+
   private async setAuthors (id: string, authors: User[], isUpdate: boolean = false): Promise<void> {
     if (isUpdate) {
       const clear = 'DELETE FROM item_authors WHERE iid = $1'

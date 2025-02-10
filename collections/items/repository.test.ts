@@ -185,4 +185,17 @@ describe('ItemRepository', () => {
       expect(authorCheck.rowCount).toBe(0)
     })
   })
+
+  describe('delete', () => {
+    it('deletes the item', async () => {
+      const { scales } = await setupScales(1)
+      const id = scales[0].id ?? 'ERROR'
+      await repository.delete(id)
+      const itemCheck = await DB.query<{ id: string }>('SELECT id FROM items WHERE id = $1', [id])
+      const authorCheck = await DB.query<{ id: string }>('SELECT id FROM item_authors WHERE iid = $1', [id])
+
+      expect(itemCheck.rowCount).toBe(0)
+      expect(authorCheck.rowCount).toBe(0)
+    })
+  })
 })
