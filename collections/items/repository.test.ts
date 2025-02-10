@@ -166,5 +166,23 @@ describe('ItemRepository', () => {
       expect(check).not.toBeNull()
       expect(check?.name).toBe(actual?.name)
     })
+
+    it('adds authors', async () => {
+      const { user } = await setupUser({ createAccount: false, createToken: false })
+      const { scales } = await setupScales(1)
+      const record = scaleToItemRecord(scales[0])
+      const newAuthors = [...scales[0].authors, user]
+      await repository.save(record, newAuthors)
+      const authorCheck = await DB.query<{ id: string }>('SELECT id FROM item_authors')
+      expect(authorCheck.rowCount).toBe(2)
+    })
+
+    it('removes authors', async () => {
+      const { scales } = await setupScales(1)
+      const record = scaleToItemRecord(scales[0])
+      await repository.save(record, [])
+      const authorCheck = await DB.query<{ id: string }>('SELECT id FROM item_authors')
+      expect(authorCheck.rowCount).toBe(0)
+    })
   })
 })

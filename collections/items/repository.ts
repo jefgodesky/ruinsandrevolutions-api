@@ -10,7 +10,7 @@ const DEFAULT_PAGE_SIZE = getEnvNumber('DEFAULT_PAGE_SIZE', 10)
 export default class ItemRepository {
   async save (record: ItemRecord, authors: User[]): Promise<ItemRecord | null> {
     if (!record.id) return await this.create(record, authors)
-    return await this.update(record)
+    return await this.update(record, authors)
   }
 
   async create (record: ItemRecord, authors: User[]): Promise<ItemRecord | null> {
@@ -20,11 +20,7 @@ export default class ItemRepository {
     if (result.warnings.length > 0) return null
 
     const saved = result.rows[0]
-    for (const author of authors) {
-      const query = 'INSERT INTO item_authors (uid, iid) VALUES ($1, $2)'
-      await DB.query(query, [author.id, saved.id])
-    }
-
+    await this.setAuthors(saved.id ?? 'ERROR', authors)
     return saved
   }
 
@@ -77,7 +73,7 @@ export default class ItemRepository {
     return { total, rows: result.rows }
   }
 
-  async update (record: ItemRecord): Promise<ItemRecord | null> {
+  async update (record: ItemRecord, authors?: User[]): Promise<ItemRecord | null> {
     const { id, slug, name, description, body, attribution, data } = record
     if (id === undefined) return null
     const fieldsObj: Record<string, string | undefined> = { slug, name, description, body, attribution }
@@ -93,7 +89,20 @@ export default class ItemRepository {
     const query = `UPDATE items SET ${fields.join(', ')}, data = $1, updated = $2 WHERE id = $3  RETURNING *`
     const result = await DB.query<ItemRecord>(query, params)
     if (result.warnings.length > 0) return null
+    if (authors) await this.setAuthors(id, authors, true)
     return result.rows[0]
+  }
+
+  private async setAuthors (id: string, authors: User[], isUpdate: boolean = false): Promise<void> {
+    if (isUpdate) {
+      const clear = 'DELETE FROM item_authors WHERE iid = $1'
+      await DB.query(clear, [id])
+    }
+
+    for (const author of authors) {
+      const query = 'INSERT INTO item_authors (uid, iid) VALUES ($1, $2)'
+      await DB.query(query, [author.id, id])
+    }
   }
 
   private async getByUniqueField (
