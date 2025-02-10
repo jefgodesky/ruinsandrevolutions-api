@@ -2,6 +2,7 @@ import ScaleAttributes, { createScaleAttributes, isScaleAttributes } from './sca
 import UserRelationship, { isUserRelationship } from './user-relationship.ts'
 import User, { isUser } from './user.ts'
 import isObject from '../utils/guards/object.ts'
+import hasNoOtherProperties from '../utils/has-no-other-properties.ts'
 
 export default interface ScaleCreation {
   data: {
@@ -47,6 +48,7 @@ const isScaleCreation = (candidate: unknown): candidate is ScaleCreation => {
 
   if (type !== 'scales') return false
   if (!isScaleAttributes(attributes)) return false
+  if (!hasNoOtherProperties(obj.data as Record<string, unknown>, ['type', 'id', 'attributes', 'relationships'])) return false
   return relationships === undefined || isUserRelationship((relationships as Record<string, unknown>).authors)
 }
 
