@@ -9,6 +9,7 @@ roles:
     - scale:create
     - scale:author:update
     - scale:author:delete
+    - scroll:create
     - user:self:update
     - user:self:destroy
     - role:self:listed:grant

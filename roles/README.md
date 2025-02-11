@@ -42,6 +42,12 @@ also delete scales that she has authored, even if she does
 not have `scale:author:delete`. This is  only meaningful for users
 who do not have `scale:delete`.
 
+## Scrolls
+
+### `scroll:create`
+
+With this, a user has permission to create a new scroll.
+
 ## Users
 
 ### `user:read`
