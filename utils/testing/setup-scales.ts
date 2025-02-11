@@ -1,4 +1,4 @@
-import Scale from '../../types/scale.ts'
+import type Scale from '../../types/scale.ts'
 import type User from '../../types/user.ts'
 import ScaleRepository from '../../collections/scales/repository.ts'
 import setupUser from './setup-user.ts'
