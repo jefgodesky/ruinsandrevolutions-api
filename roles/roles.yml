@@ -4,6 +4,7 @@ default:
 roles:
   anonymous:
     - scale:read
+    - scroll:read
     - user:read
   active:
     - scale:create

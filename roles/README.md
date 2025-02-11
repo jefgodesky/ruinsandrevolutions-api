@@ -48,6 +48,18 @@ who do not have `scale:delete`.
 
 With this, a user has permission to create a new scroll.
 
+### `scroll:read`
+
+With this, a user has permission to view any scroll.
+
+### `scroll:author:read`
+
+With this, a user has permission to view any scroll that she is
+an author of. Note that a user who has `scroll:read` can also view
+scrolls that she has authored, even if she does not have
+`scroll:author:read`. This is  only meaningful for users who do
+not have `scroll:read`.
+
 ## Users
 
 ### `user:read`
