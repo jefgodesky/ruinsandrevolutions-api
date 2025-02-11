@@ -2,39 +2,54 @@ import { describe, it } from 'jsr:@std/testing/bdd'
 import { expect } from 'jsr:@std/expect'
 import { createMockContext } from '@oak/oak/testing'
 import { createScale } from '../../types/scale.ts'
+import { createScroll } from '../../types/scroll.ts'
 import { createUser } from '../../types/user.ts'
 import checkItemAuthorPermission from './item-author.ts'
 
 describe('checkItemAuthorPermission', () => {
   const user = createUser()
   const scale = createScale({ authors: [user] })
+  const scroll = createScroll({ authors: [user] })
+
+  const scenarios: Array<{ state: Record<string, any>, prefix: string }> = [
+    { state: { scale }, prefix: 'scale' },
+    { state: { scroll }, prefix: 'scroll' }
+  ]
 
   it('returns false if the client does not have the author version', () => {
-    const ctx = createMockContext({
-      state: { permissions: [], scale, client: user }
-    })
-    expect(checkItemAuthorPermission(ctx, 'scale:a')).toBe(false)
+    for (const { state, prefix } of scenarios) {
+      const ctx = createMockContext({
+        state: { ...state, permissions: [], client: user }
+      })
+      expect(checkItemAuthorPermission(ctx, `${prefix}:a`)).toBe(false)
+    }
   })
 
   it('returns false if the permission is granted but there is no client', () => {
-    const ctx = createMockContext({
-      state: { permissions: ['scale:author:a'], scale }
-    })
-    expect(checkItemAuthorPermission(ctx, 'scale:a')).toBe(false)
+    for (const { state, prefix } of scenarios) {
+      const ctx = createMockContext({
+        state: { ...state, permissions: [`${prefix}:author:a`] }
+      })
+      expect(checkItemAuthorPermission(ctx, `${prefix}:a`)).toBe(false)
+    }
   })
 
   it('returns false if the permission is granted but you\'re not an author', () => {
     const client = createUser({ name: 'Jane Doe', username: 'jane' })
-    const ctx = createMockContext({
-      state: { permissions: ['scale:author:a'], scale, client }
-    })
-    expect(checkItemAuthorPermission(ctx, 'scale:a')).toBe(false)
+    for (const { state, prefix } of scenarios) {
+      const ctx = createMockContext({
+        state: { ...state, permissions: [`${prefix}:author:a`], client }
+      })
+      expect(checkItemAuthorPermission(ctx, `${prefix}:a`)).toBe(false)
+    }
   })
 
   it('returns true if the permission is granted and you\'re an author', () => {
-    const ctx = createMockContext({
-      state: { permissions: ['scale:author:a'], scale, client: user }
-    })
-    expect(checkItemAuthorPermission(ctx, 'scale:a')).toBe(true)
+    for (const { state, prefix } of scenarios) {
+      const ctx = createMockContext({
+        state: { ...state, permissions: [`${prefix}:author:a`], client: user }
+      })
+      expect(checkItemAuthorPermission(ctx, `${prefix}:a`)).toBe(true)
+    }
   })
 })
