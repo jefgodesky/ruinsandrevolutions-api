@@ -3,6 +3,7 @@ en-us:
   authentication_required: This operation requires authentication.
   endpoint_not_found: Endpoint not found.
   invalid_scale_creation: Request body is not a valid ScaleCreation object.
+  invalid_scroll_creation: Request body is not a valid ScrollCreation object.
   invalid_token_creation: Request body is not a valid TokenCreation object.
   invalid_auth_token: Could not authenticate provided token.
   invalid_account_post: To create a new account, you must supply both a provider and an appropriate access or ID token.
