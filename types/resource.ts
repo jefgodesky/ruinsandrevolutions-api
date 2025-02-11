@@ -1,12 +1,14 @@
 import AuthTokenResource, { isAuthTokenResource } from './auth-token-resource.ts'
 import ProviderResource, { isProviderResource } from './provider-resource.ts'
 import ScaleResource, { isScaleResource } from './scale-resource.ts'
+import ScrollResource, { isScrollResource } from './scroll-resource.ts'
 import UserResource, { createUserResource, isUserResource } from './user-resource.ts'
 
 type Resource =
   AuthTokenResource |
   ProviderResource |
   ScaleResource |
+  ScrollResource |
   UserResource
 
 const createResource = (overrides?: Partial<Resource>): Resource => {
@@ -18,6 +20,7 @@ const isResource = (candidate: unknown): candidate is Resource => {
   if (isAuthTokenResource(candidate)) return true
   if (isProviderResource(candidate)) return true
   if (isScaleResource(candidate)) return true
+  if (isScrollResource(candidate)) return true
   return isUserResource(candidate)
 }
 
