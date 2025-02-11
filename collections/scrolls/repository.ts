@@ -17,4 +17,11 @@ export default class ScrollRepository {
       ? null
       : itemRecordAndAuthorsToScroll(record, authors)
   }
+
+  async get (id: string): Promise<Scroll | null> {
+    const repository = new ItemRepository()
+    const record = await repository.getByIdOrSlug('scroll', id)
+    if (record === null) return null
+    return itemRecordAndAuthorsToScroll(record, record.authors)
+  }
 }
