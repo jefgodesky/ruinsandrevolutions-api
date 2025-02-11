@@ -15,7 +15,7 @@ ScaleAttributes:
       type: string
       description: A short description of this scale.
       example: A scale of attitudes that one character may have towards another.
-    notes:
+    body:
       type: string
       description: Longer text to more fully explain how the scale works. This can include Markdown.
     attribution:
@@ -136,7 +136,7 @@ ScaleCreation:
               type: string
               description: A short description of this scale.
               example: A scale of attitudes that one character may have towards another.
-            notes:
+            body:
               type: string
               description: Longer text to more fully explain how the scale works. This can include Markdown.
             attribution:
@@ -276,7 +276,7 @@ ScaleFields:
     This optional parameter is a comma-separated list of the attributes
     that you would like to receive back for the scale requested. Possible
     values include any combination of `slug`, `name`, `description`,
-    `notes`, `attribution`, `levels`, `created`, and `updated`.
+    `body`, `attribution`, `levels`, `created`, and `updated`.
   schema:
     type: string
   examples:

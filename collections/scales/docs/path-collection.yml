@@ -1,7 +1,7 @@
 post:
   tags:
     - Scales
-  summary: Add a new scales
+  summary: Add a new scale
   description: This endpoint allows authenticated users to create new scales.
   operationId: createScale
   parameters:

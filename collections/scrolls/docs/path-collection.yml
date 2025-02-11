@@ -1,0 +1,29 @@
+post:
+  tags:
+    - Scrolls
+  summary: Add a new scroll
+  description: This endpoint allows authenticated users to create new scrolls.
+  operationId: createScroll
+  parameters:
+    - $ref: "./schemas.yml#/ScrollFields"
+  security:
+    - bearerAuth: []
+  requestBody:
+    description: Create a new scroll
+    content:
+      application/json:
+        schema:
+          $ref: "./schemas.yml#/ScrollCreation"
+  responses:
+    200:
+      description: New scroll created.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yml#/ScrollResponse"
+    400:
+      description: |
+        If you're receiving this error response, the most likely cause
+        is sending something other than a `ScrollCreation` body.
+    401:
+      description: Only authenticated users can create scales.

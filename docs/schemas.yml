@@ -369,3 +369,50 @@ UUID:
   pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
   minLength: 36
   maxLength: 36
+RandomizedString:
+  type: object
+  required: [human]
+  properties:
+    human:
+      type: string
+      description: |
+        This is the human-readable version of the string, the one
+        that you might print out on its own.
+      example: 2d6 + Intelligence
+    computable:
+      type: string
+      description: |
+        This is a version of the same string that can be parsed
+        for randomized values or mathematical expressions.
+      example: "{{2d6 + Intelligence}}"
+      examples:
+        intelligence:
+          summary: A normal ability roll
+          value: "{{2d6 + Intelligence}}"
+        intelligenceAdv:
+          summary: An ability roll made with advantage
+          value: "{{3d6kh2 + Intelligence}}"
+        intelligenceDis:
+          summary: An ability roll made with disadvantage
+          value: "{{3d6kl2 + Intelligence}}"
+        math:
+          summary: A mathematical statement
+          value: "{{1 + 1}}"
+        statMath:
+          summary: Math with abilities as variables
+          value: "{{5 - Intelligence}}"
+        tableRef:
+          summary: Insert result from a random table (slug)
+          value: "{{roll: random-encounters}}"
+        mixed:
+          summary: Mix evaluations with static text
+          value: "{{1d6}} skeletons"
+Note:
+  type: object
+  required: [name, text]
+  properties:
+    name:
+      type: string
+      description: A name for this note.
+    text:
+      $ref: "./schemas.yml#/RandomizedString"
