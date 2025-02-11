@@ -5,10 +5,13 @@ en-us:
   invalid_scale_creation: Request body is not a valid ScaleCreation object.
   invalid_scroll_creation: Request body is not a valid ScrollCreation object.
   invalid_token_creation: Request body is not a valid TokenCreation object.
+  invalid_scale_patch: Request body is not a valid ScalePatch object.
   invalid_auth_token: Could not authenticate provided token.
   invalid_account_post: To create a new account, you must supply both a provider and an appropriate access or ID token.
   jsonapi_enforce_accept: Requests must Accept application/vnd.api+json. See JSON:API v1.1 specifications for more details.
   jsonapi_enforce_content_type: Requests must be of Content-Type application/vnd.api+json. See JSON:API v1.1. specifications for more details.
   lack_permissions: You do not have permission to perform this operaiton.
   method_not_allowed: Method not allowed. See the Allow header for a list of allowed methods for this endpoint.
+  scale_not_found: Scale not found.
+  scroll_not_found: Scroll not found.
   user_not_found: User not found.
