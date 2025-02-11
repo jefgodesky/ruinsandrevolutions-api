@@ -4,7 +4,6 @@ import { createFields } from '../../../types/fields.ts'
 import { createScale } from '../../../types/scale.ts'
 import ScaleAttributes, { type ScaleAttributesKeys, scaleAttributes, createScaleAttributes } from '../../../types/scale-attributes.ts'
 import getAllFieldCombinations from '../../testing/get-all-field-combinations.ts'
-import getRoot from '../../get-root.ts'
 import scaleToScaleResource from './scale-resource.ts'
 
 describe('scaleToScaleResource', () => {
