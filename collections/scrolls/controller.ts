@@ -1,7 +1,9 @@
 import { Context, Status, createHttpError } from '@oak/oak'
+import type ScrollPatch from '../../types/scroll-patch.ts'
 import urlToFields from '../../utils/transformers/url-to/fields.ts'
 import ScrollRepository from './repository.ts'
 import sendJSON from '../../utils/send-json.ts'
+import patchScroll from '../../utils/patching/scroll.ts'
 import scrollToScrollResponse from '../../utils/transformers/scroll-to/scroll-response.ts'
 import scrollsToScrollPageResponse from '../../utils/transformers/scroll-to/scroll-page-response.ts'
 import getNumberFromQueryString from '../../utils/get-number-from-query-string.ts'
@@ -47,6 +49,17 @@ class ScrollController {
     const where = query.length > 0 ? query : undefined
     const { total, rows } = await ScrollController.getRepository().list(limit, offset, where, sort, params)
     const res = scrollsToScrollPageResponse(rows, total, offset ?? 0, limit, fields)
+    sendJSON(ctx, res)
+  }
+
+  static async update (ctx: Context, url?: URL) {
+    const src = url ?? ctx.request.url
+    const fields = urlToFields(src)
+    const patch = await ctx.request.body.json() as ScrollPatch
+    const patched = patchScroll(ctx.state.scroll, patch)
+    const updated = await ScrollController.getRepository().update(patched)
+    if (updated === null) throw createHttpError(Status.InternalServerError)
+    const res = scrollToScrollResponse(updated, fields)
     sendJSON(ctx, res)
   }
 }
