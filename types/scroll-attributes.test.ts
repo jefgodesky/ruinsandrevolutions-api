@@ -39,10 +39,6 @@ describe('isScrollAttributesPartial', () => {
   it('returns true if given a ScrollAttributes partial', () => {
     const objects = getAllFieldCombinations(createScrollAttributes())
     for (const object of objects) {
-      console.log({
-        object,
-        test: isScrollAttributesPartial(object)
-      })
       expect(isScrollAttributesPartial(object)).toBe(true)
     }
   })
