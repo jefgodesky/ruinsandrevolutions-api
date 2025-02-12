@@ -98,4 +98,32 @@ describe('ScrollRepository', () => {
       expect(p2.rows.map((scroll: Scroll) => scroll.id!)).toEqual([scrolls[scrolls.length - 2].id])
     })
   })
+
+  describe('update', () => {
+    const updatedName = 'Updated Scroll'
+
+    it('updates an item', async () => {
+      const { scrolls } = await setupScrolls(1)
+      scrolls[0].name = updatedName
+      const actual = await repository.update(scrolls[0])
+      expect(actual?.name).toBe(updatedName)
+    })
+
+    it('adds authors', async () => {
+      const { user } = await setupUser({ createAccount: false, createToken: false })
+      const { scrolls } = await setupScrolls(1)
+      scrolls[0].authors.push(user)
+      await repository.update(scrolls[0])
+      const authorCheck = await DB.query<{ id: string }>('SELECT id FROM item_authors')
+      expect(authorCheck.rowCount).toBe(2)
+    })
+
+    it('removes authors', async () => {
+      const { scrolls } = await setupScrolls(1)
+      scrolls[0].authors = []
+      await repository.update(scrolls[0])
+      const authorCheck = await DB.query<{ id: string }>('SELECT id FROM item_authors')
+      expect(authorCheck.rowCount).toBe(0)
+    })
+  })
 })

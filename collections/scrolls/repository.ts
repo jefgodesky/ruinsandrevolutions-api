@@ -3,6 +3,7 @@ import type ScrollCreation from '../../types/scroll-creation.ts'
 import type User from '../../types/user.ts'
 import ItemRepository from '../items/repository.ts'
 import scrollCreationToItemRecord from '../../utils/transformers/scroll-creation-to/item-record.ts'
+import scrollToItemRecord from '../../utils/transformers/scroll-to/item-record.ts'
 import itemRecordAndAuthorsToScroll from '../../utils/transformers/item-record-and-authors-to/scroll.ts'
 import getEnvNumber from '../../utils/get-env-number.ts'
 
@@ -42,5 +43,13 @@ export default class ScrollRepository {
     const { total, rows } = await repository.list(limit, offset, where, sort, params)
     const scrolls = rows.map(row => itemRecordAndAuthorsToScroll(row, row.authors))
     return { total, rows: scrolls }
+  }
+
+  async update (scroll: Scroll): Promise<Scroll | null> {
+    if (!scroll.id) return null
+    const repository = new ItemRepository()
+    const res = await repository.update(scrollToItemRecord(scroll), scroll.authors)
+    if (res === null) return null
+    return await this.get(scroll.id)
   }
 }
