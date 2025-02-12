@@ -52,4 +52,9 @@ export default class ScrollRepository {
     if (res === null) return null
     return await this.get(scroll.id)
   }
+
+  async delete (id: string): Promise<void> {
+    const repository = new ItemRepository()
+    return await repository.delete(id)
+  }
 }

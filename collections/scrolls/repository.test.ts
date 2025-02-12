@@ -126,4 +126,14 @@ describe('ScrollRepository', () => {
       expect(authorCheck.rowCount).toBe(0)
     })
   })
+
+  describe('delete', () => {
+    it('deletes the scroll', async () => {
+      const { scrolls } = await setupScrolls(1)
+      const id = scrolls[0].id ?? 'ERROR'
+      await repository.delete(id)
+      const check = await repository.get(id)
+      expect(check).toBeNull()
+    })
+  })
 })
