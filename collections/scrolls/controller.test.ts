@@ -311,4 +311,14 @@ describe('ScrollController', () => {
       }
     })
   })
+
+  describe('delete', () => {
+    it('deletes the scroll', async () => {
+      const { scrolls } = await setupScrolls(1)
+      const scroll = scrolls[0]
+      const ctx = createMockContext({ state: { scroll } })
+      await ScrollController.delete(ctx)
+      expect(ctx.response.status).toBe(204)
+    })
+  })
 })

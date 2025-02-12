@@ -3,6 +3,7 @@ import type ScrollPatch from '../../types/scroll-patch.ts'
 import urlToFields from '../../utils/transformers/url-to/fields.ts'
 import ScrollRepository from './repository.ts'
 import sendJSON from '../../utils/send-json.ts'
+import sendNoContent from '../../utils/send-no-content.ts'
 import patchScroll from '../../utils/patching/scroll.ts'
 import scrollToScrollResponse from '../../utils/transformers/scroll-to/scroll-response.ts'
 import scrollsToScrollPageResponse from '../../utils/transformers/scroll-to/scroll-page-response.ts'
@@ -61,6 +62,12 @@ class ScrollController {
     if (updated === null) throw createHttpError(Status.InternalServerError)
     const res = scrollToScrollResponse(updated, fields)
     sendJSON(ctx, res)
+  }
+
+  static async delete (ctx: Context) {
+    const { id } = ctx.state.scroll
+    await ScrollController.getRepository().delete(id)
+    sendNoContent(ctx)
   }
 }
 
