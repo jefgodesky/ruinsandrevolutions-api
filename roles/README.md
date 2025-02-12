@@ -52,6 +52,10 @@ With this, a user has permission to create a new scroll.
 
 With this, a user has permission to view any scroll.
 
+### `scroll:update`
+
+With this, a user has permission to update any scroll.
+
 ### `scroll:author:read`
 
 With this, a user has permission to view any scroll that she is
@@ -59,6 +63,14 @@ an author of. Note that a user who has `scroll:read` can also view
 scrolls that she has authored, even if she does not have
 `scroll:author:read`. This is  only meaningful for users who do
 not have `scroll:read`.
+
+### `scroll:author:update`
+
+With this, a user has permission to make changes to any scroll that
+she is an author of. Note that a user who has `scroll:update` can
+also make changes to scrolls that she has authored, even if she does
+not have `scroll:author:update`. This is  only meaningful for users
+who do not have `scroll:update`.
 
 ## Users
 
