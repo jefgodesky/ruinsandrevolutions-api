@@ -269,5 +269,55 @@ describe('/scrolls', () => {
         expect(res.body.included).toHaveLength(0)
       })
     })
+
+    describe('DELETE', () => {
+      it('returns 401 if not authenticated', async () => {
+        const res = await supertest(getSupertestRoot())
+          .delete(`/scrolls/${scroll.id}`)
+          .set({
+            'Content-Type': 'application/vnd.api+json'
+          })
+
+        expect(res.status).toBe(401)
+      })
+
+      it('returns 403 if authenticated without permission', async () => {
+        const { jwt } = await setupUser({ createAccount: false })
+        const res = await supertest(getSupertestRoot())
+          .delete(`/scrolls/${scroll.id}`)
+          .set({
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/vnd.api+json'
+          })
+
+        expect(res.status).toBe(403)
+      })
+
+      it('returns 404 if no scroll has that slug', async () => {
+        const res = await supertest(getSupertestRoot())
+          .delete(`/scrolls/nope`)
+          .set({
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/vnd.api+json'
+          })
+
+        expect(res.status).toBe(404)
+      })
+
+      it('deletes a scroll', async () => {
+        const res = await supertest(getSupertestRoot())
+          .delete(`/scrolls/${scroll.id}`)
+          .set({
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/vnd.api+json'
+          })
+
+        const check = await supertest(getSupertestRoot())
+          .get(`/scrolls/${scroll.id}`)
+
+        expect(res.status).toBe(204)
+        expect(check.status).toBe(404)
+      })
+    })
   })
 })

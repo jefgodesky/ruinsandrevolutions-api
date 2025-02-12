@@ -55,3 +55,22 @@ patch:
       description: You cannot update a scroll unless you are one of its authors.
     404:
       description: The requested scroll could not be found.
+delete:
+  tags:
+    - Scrolls
+  summary: Delete a scroll
+  description: This endpoint allows any of a scroll’s authors to delete that scroll.
+  operationId: deleteScroll
+  parameters:
+    - $ref: "./schemas.yml#/ScrollID"
+  security:
+    - bearerAuth: [ ]
+  responses:
+    204:
+      description: The scroll was successfully deleted.
+    401:
+      description: Only authenticated users can delete scrolls.
+    403:
+      description: You cannot delete a scroll unless you are one of its authors.
+    404:
+      description: The requested scroll could not be found.

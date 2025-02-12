@@ -42,7 +42,7 @@ router.get('/:scrollId',
     ScrollController.get(ctx)
   })
 
-router.patch('/:scaleId',
+router.patch('/:scrollId',
   requireScrollPatchBody,
   loadScroll,
   loadClient,
@@ -51,6 +51,16 @@ router.patch('/:scaleId',
   requirePermissions('scroll:update'),
   async ctx => {
     await ScrollController.update(ctx)
+  })
+
+router.delete('/:scrollId',
+  loadScroll,
+  loadClient,
+  requireScroll,
+  requireClient,
+  requirePermissions('scroll:delete'),
+  async ctx => {
+    await ScrollController.delete(ctx)
   })
 
 export default router
