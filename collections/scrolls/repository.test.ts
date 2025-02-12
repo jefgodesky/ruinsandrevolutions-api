@@ -1,14 +1,14 @@
 import { describe, beforeAll, beforeEach, afterAll, afterEach, it } from 'jsr:@std/testing/bdd'
 import { expect } from 'jsr:@std/expect'
+import type Scroll from '../../types/scroll.ts'
+import type ItemRecord from '../../types/item-record.ts'
 import type User from '../../types/user.ts'
 import { isScroll } from '../../types/scroll.ts'
 import { createScrollCreation } from '../../types/scroll-creation.ts'
-import ItemRecord from '../../types/item-record.ts'
 import DB from '../../DB.ts'
 import setupScrolls from '../../utils/testing/setup-scrolls.ts'
 import setupUser from '../../utils/testing/setup-user.ts'
 import ScrollRepository from './repository.ts'
-import setupScales from '../../utils/testing/setup-scales.ts'
 
 describe('ScrollRepository', () => {
   let repository: ScrollRepository
@@ -70,6 +70,32 @@ describe('ScrollRepository', () => {
       const { scrolls } = await setupScrolls(1)
       const actual = await repository.get(scrolls[0].slug!)
       expect(actual?.id).toBe(scrolls[0].id)
+    })
+  })
+
+  describe('list', () => {
+    it('returns an empty list if there are no scrolls', async () => {
+      const actual = await repository.list()
+      expect(actual).toEqual({ total: 0, rows: [] })
+    })
+
+    it('returns all existing scrolls', async () => {
+      await setupScrolls(3)
+      const actual = await repository.list()
+      expect(actual.total).toBe(3)
+      expect(actual.rows).toHaveLength(3)
+    })
+
+    it('paginates results', async () => {
+      const { scrolls } = await setupScrolls(3)
+      const p1 = await repository.list(1, 0)
+      const p2 = await repository.list(1, 1)
+
+      expect(p1.total).toBe(3)
+      expect(p1.rows.map((scroll: Scroll) => scroll.id!)).toEqual([scrolls[scrolls.length - 1].id])
+
+      expect(p2.total).toBe(3)
+      expect(p2.rows.map((scroll: Scroll) => scroll.id!)).toEqual([scrolls[scrolls.length - 2].id])
     })
   })
 })

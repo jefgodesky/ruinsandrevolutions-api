@@ -4,6 +4,9 @@ import type User from '../../types/user.ts'
 import ItemRepository from '../items/repository.ts'
 import scrollCreationToItemRecord from '../../utils/transformers/scroll-creation-to/item-record.ts'
 import itemRecordAndAuthorsToScroll from '../../utils/transformers/item-record-and-authors-to/scroll.ts'
+import getEnvNumber from '../../utils/get-env-number.ts'
+
+const DEFAULT_PAGE_SIZE = getEnvNumber('DEFAULT_PAGE_SIZE', 10)
 
 export default class ScrollRepository {
   async create (post: ScrollCreation): Promise<Scroll | null> {
@@ -23,5 +26,21 @@ export default class ScrollRepository {
     const record = await repository.getByIdOrSlug('scroll', id)
     if (record === null) return null
     return itemRecordAndAuthorsToScroll(record, record.authors)
+  }
+
+  async list (
+    limit: number = DEFAULT_PAGE_SIZE,
+    offset: number = 0,
+    where: string = 'TRUE',
+    sort: string = 'i.updated DESC',
+    params: string[] = []
+  ): Promise<{ total: number, rows: Scroll[] }> {
+    params.push('scroll')
+    where = where + ` AND i.type = $${params.length}`
+
+    const repository = new ItemRepository()
+    const { total, rows } = await repository.list(limit, offset, where, sort, params)
+    const scrolls = rows.map(row => itemRecordAndAuthorsToScroll(row, row.authors))
+    return { total, rows: scrolls }
   }
 }
