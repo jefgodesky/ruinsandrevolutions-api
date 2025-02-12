@@ -1,0 +1,19 @@
+get:
+  tags:
+    - Scrolls
+  summary: Retrieve a scroll
+  description: This endpoint retrieves a scroll.
+  operationId: getScroll
+  parameters:
+    - $ref: "./schemas.yml#/ScrollID"
+    - $ref: "./schemas.yml#/ScrollFields"
+    - $ref: "../../users/docs/schemas.yml#/UserFields"
+  responses:
+    200:
+      description: The scroll requested.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yml#/ScrollResponse"
+    404:
+      description: The requested scroll could not be found.

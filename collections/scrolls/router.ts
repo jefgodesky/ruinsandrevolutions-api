@@ -3,8 +3,10 @@ import ScrollController from './controller.ts'
 import loadClient from '../../middlewares/load/client.ts'
 import loadItemCreation from '../../middlewares/load/item-creation.ts'
 import loadBackupAuthor from '../../middlewares/load/backup-author.ts'
+import loadScroll from '../../middlewares/load/scroll.ts'
 import requireClient from '../../middlewares/require/client.ts'
 import requireItemCreation from '../../middlewares/require/resources/item-creation.ts'
+import requireScroll from '../../middlewares/require/resources/scroll.ts'
 import requirePermissions from '../../middlewares/require/permissions.ts'
 import getPrefix from '../../utils/get-prefix.ts'
 
@@ -21,6 +23,15 @@ router.post('/',
   requirePermissions('scroll:create'),
   async ctx => {
     await ScrollController.create(ctx)
+  })
+
+router.get('/:scrollId',
+  loadScroll,
+  requireScroll,
+  loadClient,
+  requirePermissions('scroll:read'),
+  ctx => {
+    ScrollController.get(ctx)
   })
 
 export default router
