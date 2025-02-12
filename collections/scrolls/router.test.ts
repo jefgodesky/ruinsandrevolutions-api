@@ -63,6 +63,19 @@ describe('/scrolls', () => {
         expect(res.body.data.relationships.authors.data[0].id).toBe(user.id)
       })
     })
+
+    describe('GET', () => {
+      it('returns a paginated list of scrolls', async () => {
+        await setupScrolls(5)
+        const res = await supertest(getSupertestRoot())
+          .get(`/scrolls?limit=2&offset=1`)
+
+        expect(res.status).toBe(200)
+        expect(res.body.data).toHaveLength(2)
+        expect(res.body.data[0].attributes).toHaveProperty('slug', 'scroll-04')
+        expect(res.body.data[1].attributes).toHaveProperty('slug', 'scroll-03')
+      })
+    })
   })
 
   describe('Resource [/scrolls/:scrollId]', () => {

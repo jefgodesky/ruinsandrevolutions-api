@@ -25,6 +25,13 @@ router.post('/',
     await ScrollController.create(ctx)
   })
 
+router.get('/',
+  loadClient,
+  requirePermissions('scroll:read'),
+  async ctx => {
+    await ScrollController.list(ctx)
+  })
+
 router.get('/:scrollId',
   loadScroll,
   requireScroll,

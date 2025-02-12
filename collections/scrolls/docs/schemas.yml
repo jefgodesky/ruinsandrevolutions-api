@@ -85,6 +85,22 @@ ScrollResponse:
       type: array
       items:
         $ref: "../../users/docs/schemas.yml#/IncludedUser"
+ScrollsResponse:
+  description: A JSON:API response that returns a paginated list of scrolls.
+  type: object
+  properties:
+    jsonapi:
+      $ref: "../../../docs/schemas.yml#/JSONAPIHeader"
+    links:
+      $ref: "../../../docs/schemas.yml#/PaginatedLinks"
+    data:
+      type: array
+      items:
+        $ref: "#/ScrollResource"
+    included:
+      type: array
+      items:
+        $ref: "../../users/docs/schemas.yml#/IncludedUser"
 ScrollCreation:
   description: The object that a client must provide to create a new scroll.
   type: object
