@@ -2,11 +2,11 @@ import { describe, it } from 'jsr:@std/testing/bdd'
 import { expect } from 'jsr:@std/expect'
 import getAllFieldCombinations from '../utils/testing/get-all-field-combinations.ts'
 import { createScaleAttributes } from './scale-attributes.ts'
+import { createUser } from './user.ts'
 import {
   createScalePatch,
   isScalePatch
 } from './scale-patch.ts'
-import {createUser} from './user.ts'
 
 describe('isScalePatch', () => {
   it('returns false if given a primitive', () => {
