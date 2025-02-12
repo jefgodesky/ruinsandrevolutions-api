@@ -2,7 +2,10 @@ import { describe, beforeEach, afterEach, afterAll, it } from '@std/testing/bdd'
 import { expect } from '@std/expect'
 import supertest from 'supertest'
 import type Scroll from '../../types/scroll.ts'
+import type ScrollAttributes from '../../types/scroll-attributes.ts'
+import type ScrollPatch from '../../types/scroll-patch.ts'
 import type User from '../../types/user.ts'
+import type UserResource from '../../types/user-resource.ts'
 import DB from '../../DB.ts'
 import { createScrollCreation } from '../../types/scroll-creation.ts'
 import getSupertestRoot from '../../utils/testing/get-supertest-root.ts'
@@ -110,6 +113,160 @@ describe('/scrolls', () => {
           expect(res.body.included[0].id).toBe(user.id)
           expect(res.body.included[0].attributes.name).toBe(user.name)
         }
+      })
+    })
+
+    describe('PATCH', () => {
+      let patch: ScrollPatch
+      const updatedName = 'Updated Scroll'
+      const updatedStart = {
+        human: '5 - Intelligence',
+        computable: '{{5 - Intelligence}}'
+      }
+
+      beforeEach(() => {
+        patch = {
+          data: {
+            type: 'scrolls',
+            id: scroll.id ?? 'ERROR',
+            attributes: {
+              name: updatedName,
+              start: updatedStart
+            }
+          }
+        }
+      })
+
+      it('returns 400 if not given a valid ScrollPatch', async () => {
+        const ids = [scroll.id, scroll.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/scrolls/${id}`)
+            .set({
+              Authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send({ a: 1 })
+
+          expect(res.status).toBe(400)
+        }
+      })
+
+      it('returns 401 if not authenticated', async () => {
+        const ids = [scroll.id, scroll.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/scrolls/${id}`)
+            .set({
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send(patch)
+
+          expect(res.status).toBe(401)
+        }
+      })
+
+      it('returns 403 if authenticated without permission', async () => {
+        const { jwt } = await setupUser({ createAccount: false })
+        const ids = [scroll.id, scroll.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/scrolls/${id}`)
+            .set({
+              Authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send(patch)
+
+          expect(res.status).toBe(403)
+        }
+      })
+
+      it('returns 404 if no scale has that ID or slug', async () => {
+        const ids = [crypto.randomUUID(), 'nope']
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/scrolls/${id}`)
+            .set({
+              Authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send(patch)
+
+          expect(res.status).toBe(404)
+        }
+      })
+
+      it('patches a scroll', async () => {
+        const ids = [scroll.id, scroll.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/scrolls/${id}`)
+            .set({
+              Authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send(patch)
+
+          const untouchedFields = ['slug', 'description', 'body', 'attribution'] as (keyof ScrollAttributes)[]
+
+          expect(res.status).toBe(200)
+          expect(res.body.data.type).toBe('scrolls')
+          expect(res.body.data.id).toBe(scroll.id)
+          expect(res.body.data.attributes.name).toBe(updatedName)
+          expect(res.body.data.attributes.start).toEqual(updatedStart)
+          for (const field of untouchedFields) {
+            expect(res.body.data.attributes[field]).toBe(scroll[field])
+          }
+        }
+      })
+
+      it('adds authors', async () => {
+        const { user } = await setupUser({ createAccount: false, createToken: false })
+        const res = await supertest(getSupertestRoot())
+          .patch(`/scrolls/${scroll.id}`)
+          .set({
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/vnd.api+json'
+          })
+          .send({
+            data: {
+              type: 'scrolls',
+              id: scroll.id ?? 'ERROR',
+              attributes: {},
+              relationships: {
+                authors: {
+                  data: [
+                    ...scroll.authors.map(author => ({ type: 'users', id: author.id ?? 'ERROR' } as UserResource)),
+                    { type: 'users', id: user.id } as UserResource
+                  ]
+                }
+              }
+            }
+          })
+
+        expect(res.body.data.relationships.authors.data).toHaveLength(2)
+        expect(res.body.included).toHaveLength(2)
+      })
+
+      it('removes authors', async () => {
+        const res = await supertest(getSupertestRoot())
+          .patch(`/scrolls/${scroll.id}`)
+          .set({
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/vnd.api+json'
+          })
+          .send({
+            data: {
+              type: 'scrolls',
+              id: scroll.id ?? 'ERROR',
+              attributes: {},
+              relationships: {authors: {data: []}}
+            }
+          })
+
+        expect(res.body.data.relationships.authors.data).toHaveLength(0)
+        expect(res.body.included).toHaveLength(0)
       })
     })
   })

@@ -7,6 +7,7 @@ import loadScroll from '../../middlewares/load/scroll.ts'
 import requireClient from '../../middlewares/require/client.ts'
 import requireItemCreation from '../../middlewares/require/resources/item-creation.ts'
 import requireScroll from '../../middlewares/require/resources/scroll.ts'
+import requireScrollPatchBody from '../../middlewares/require/body/scroll-patch.ts'
 import requirePermissions from '../../middlewares/require/permissions.ts'
 import getPrefix from '../../utils/get-prefix.ts'
 
@@ -39,6 +40,17 @@ router.get('/:scrollId',
   requirePermissions('scroll:read'),
   ctx => {
     ScrollController.get(ctx)
+  })
+
+router.patch('/:scaleId',
+  requireScrollPatchBody,
+  loadScroll,
+  loadClient,
+  requireScroll,
+  requireClient,
+  requirePermissions('scroll:update'),
+  async ctx => {
+    await ScrollController.update(ctx)
   })
 
 export default router

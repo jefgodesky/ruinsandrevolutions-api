@@ -48,7 +48,7 @@ patch:
     400:
       description: |
         If you're receiving this error response, the most likely cause
-        is sending something other than a `ScaleCreation` body.
+        is sending something other than a `ScalePatch` body.
     401:
       description: Only authenticated users can update scales.
     403:

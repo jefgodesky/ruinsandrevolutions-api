@@ -17,3 +17,41 @@ get:
             $ref: "./schemas.yml#/ScrollResponse"
     404:
       description: The requested scroll could not be found.
+patch:
+  tags:
+    - Scrolls
+  summary: Update a scroll
+  description: |
+    This endpoint allows any of a scroll’s authors to update that scroll.
+    This is a patch operation, so any fields not specified will remain as
+    they were.
+  operationId: updateScroll
+  parameters:
+    - $ref: "./schemas.yml#/ScrollID"
+    - $ref: "./schemas.yml#/ScrollFields"
+    - $ref: "../../users/docs/schemas.yml#/UserFields"
+  security:
+    - bearerAuth: [ ]
+  requestBody:
+    description: Update a scroll
+    content:
+      application/json:
+        schema:
+          $ref: "./schemas.yml#/ScrollPatch"
+  responses:
+    200:
+      description: The updated scroll.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yml#/ScrollResponse"
+    400:
+      description: |
+        If you're receiving this error response, the most likely cause
+        is sending something other than a `ScrollPatch` body.
+    401:
+      description: Only authenticated users can update scrolls.
+    403:
+      description: You cannot update a scroll unless you are one of its authors.
+    404:
+      description: The requested scroll could not be found.

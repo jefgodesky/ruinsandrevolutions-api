@@ -13,11 +13,11 @@ ScrollAttributes:
       example: Alarm
     description:
       type: string
-      description: A short description of this scale.
+      description: A short description of this scroll.
       example: When will the guards become aware that there is an intruder in the manor?
     body:
       type: string
-      description: Longer text to more fully explain how the scale works. This can include Markdown.
+      description: Longer text to more fully explain how the scroll works. This can include Markdown.
     attribution:
       type: string
       description: |
@@ -120,27 +120,27 @@ ScrollCreation:
           properties:
             slug:
               type: string
-              description: A slugified string that uniquely identifies this scale.
+              description: A slugified string that uniquely identifies this scroll.
               pattern: '^[a-z0-9-]+$'
-              example: attitude
+              example: alarm
             name:
               type: string
-              description: The name of this scale.
-              example: Attitude
+              description: The name of this scroll.
+              example: Alarm
             description:
               type: string
-              description: A short description of this scale.
-              example: A scale of attitudes that one character may have towards another.
+              description: A short description of this scroll.
+              example: When will the guards become aware that there is an intruder in the manor?
             body:
               type: string
-              description: Longer text to more fully explain how the scale works. This can include Markdown.
+              description: Longer text to more fully explain how the scroll works. This can include Markdown.
             attribution:
               type: string
               description: |
-                When you submit a scale using this endpoint, you’re agreeing to share
+                When you submit a scroll using this endpoint, you’re agreeing to share
                 it under a CC-BY-SA 4.0 International License. With this field, you can
                 include any necessary attributions from other CC-BY-SA-licensed works
-                that you have built on. Anyone who builds on this scale should include
+                that you have built on. Anyone who builds on this scroll should include
                 everything in this attribution field _plus_ an attribution to you.
             start:
               $ref: "../../../docs/schemas.yml#/RandomizedString"
@@ -150,6 +150,78 @@ ScrollCreation:
                 $ref: "../../../docs/schemas.yml#/Note"
         relationships:
           type: object
+          properties:
+            authors:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    description: |
+                      Specify each author by her unique ID string.
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: users
+                      id:
+                        $ref: "../../../docs/schemas.yml#/UUID"
+ScrollPatch:
+  description: The object that a client must provide to update a scroll.
+  type: object
+  required: [data]
+  properties:
+    data:
+      type: object
+      required: [type, id, attributes]
+      properties:
+        type:
+          type: string
+          example: "scrolls"
+        id:
+          $ref: "#/ScrollID"
+        attributes:
+          description: The fields associated with a scroll.
+          type: object
+          properties:
+            slug:
+              type: string
+              description: A slugified string that uniquely identifies this scroll.
+              pattern: '^[a-z0-9-]+$'
+              example: alarm
+            name:
+              type: string
+              description: The name of this scroll.
+              example: Alarm
+            description:
+              type: string
+              description: A short description of this scroll.
+              example: When will the guards become aware that there is an intruder in the manor?
+            body:
+              type: string
+              description: Longer text to more fully explain how the scroll works. This can include Markdown.
+            attribution:
+              type: string
+              description: |
+                When you submit a scroll using this endpoint, you’re agreeing to share
+                it under a CC-BY-SA 4.0 International License. With this field, you can
+                include any necessary attributions from other CC-BY-SA-licensed works
+                that you have built on. Anyone who builds on this scroll should include
+                everything in this attribution field _plus_ an attribution to you.
+            start:
+              $ref: "../../../docs/schemas.yml#/RandomizedString"
+            notes:
+              type: array
+              items:
+                $ref: "../../../docs/schemas.yml#/Note"
+        relationships:
+          type: object
+          description: |
+            If omitted, you can update the scroll without changing the
+            authors. If included, it performs a full replacement of
+            the item's authors. Any authors not included in the new
+            list will be removed, and any new authors in the list
+            will be added.
           properties:
             authors:
               type: object
