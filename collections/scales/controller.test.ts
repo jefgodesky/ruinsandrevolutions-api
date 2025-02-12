@@ -165,7 +165,7 @@ describe('ScaleController', () => {
     it('can be sorted', async () => {
       const { user } = await setupScales(3, ['C', 'A', 'B'])
       const ctx = createMockContext({ state: { client: user } })
-      const url = new URL('http://localhost:8001/v1/tasks?sort=name')
+      const url = new URL('http://localhost:8001/v1/scales?sort=name')
       await ScaleController.list(ctx, url)
       const data = (ctx.response.body as Response)?.data as ScaleResource[]
 
@@ -179,7 +179,7 @@ describe('ScaleController', () => {
     it('can be filtered', async () => {
       const { user } = await setupScales(3, ['C', 'A', 'B'])
       const ctx = createMockContext({ state: { client: user } })
-      const url = new URL('http://localhost:8001/v1/tasks?filter[name]=A')
+      const url = new URL('http://localhost:8001/v1/scales?filter[name]=A')
       await ScaleController.list(ctx, url)
       const data = (ctx.response.body as Response)?.data as ScaleResource[]
 
@@ -192,7 +192,7 @@ describe('ScaleController', () => {
       const limit = 3
       const { user } = await setupScales(total)
       const ctx = createMockContext({ state: { client: user } })
-      const url = new URL(`http://localhost:8001/v1/tasks?limit=${limit}&offset=1`)
+      const url = new URL(`http://localhost:8001/v1/scales?limit=${limit}&offset=1`)
       await ScaleController.list(ctx, url)
       const data = (ctx.response.body as Response)?.data as ScaleResource[]
 
