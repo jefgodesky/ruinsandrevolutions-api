@@ -36,6 +36,9 @@ export default class ScaleRepository {
     sort: string = 'i.updated DESC',
     params: string[] = []
   ): Promise<{ total: number, rows: Scale[] }> {
+    params.push('scale')
+    where = where + ` AND i.type = $${params.length}`
+
     const repository = new ItemRepository()
     const { total, rows } = await repository.list(limit, offset, where, sort, params)
     const scales = rows.map(row => itemRecordAndAuthorsToScale(row, row.authors))
