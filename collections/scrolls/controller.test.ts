@@ -3,10 +3,11 @@ import { expect } from '@std/expect'
 import { createMockContext } from '@oak/oak/testing'
 import type Resource from '../../types/resource.ts'
 import type Response from '../../types/response.ts'
+import { createScroll } from '../../types/scroll.ts'
 import ScrollAttributes, { createScrollAttributes } from '../../types/scroll-attributes.ts'
 import ScrollCreation, { createScrollCreation } from '../../types/scroll-creation.ts'
 import type ScrollResource from '../../types/scroll-resource.ts'
-import User from '../../types/user.ts'
+import User, {createUser} from '../../types/user.ts'
 import UserAttributes, { createUserAttributes } from '../../types/user-attributes.ts'
 import type UserResource from '../../types/user-resource.ts'
 import DB from '../../DB.ts'
@@ -81,6 +82,58 @@ describe('ScrollController', () => {
         for (const author of authorAttributes) {
           for (const field of fields.users) {
             expect(author[field] === undefined).toBe(object[field] === undefined)
+          }
+        }
+      }
+    })
+  })
+
+  describe('get', () => {
+    const userAttributes = createUserAttributes()
+    const user = createUser({ ...userAttributes })
+    const attributes = createScrollAttributes()
+    const scroll = createScroll({ ...attributes, authors: [user] })
+    const ctx = createMockContext({ state: { scroll } })
+
+    it('returns the scroll', () => {
+      ScrollController.get(ctx)
+      const data = (ctx.response.body as Response)?.data as ScrollResource
+      expect(ctx.response.status).toBe(200)
+      expect(data).toBeDefined()
+      expect(data.type).toBe('scrolls')
+      expect(data.attributes).toHaveProperty('name', scroll.name)
+    })
+
+    it('returns a sparse fieldset', () => {
+      const objects = getAllFieldCombinations(attributes)
+      for (const object of objects) {
+        const fields = Object.keys(object) as (keyof ScrollAttributes)[]
+        const url = new URL(`${getRoot()}/scrolls/${scroll.id}?fields[scrolls]=${fields.join(',')}`)
+        ScrollController.get(ctx, url)
+        const data = (ctx.response.body as Response)?.data as ScrollResource
+        const receivedAttributes = data.attributes as ScrollAttributes
+
+        expect(ctx.response.status).toBe(200)
+        for (const field of fields) {
+          expect(receivedAttributes[field]).toEqual(object[field])
+        }
+      }
+    })
+
+    it('returns a sparse fieldset (authors)', () => {
+      const objects = getAllFieldCombinations(userAttributes)
+      for (const object of objects) {
+        const fields = Object.keys(object) as (keyof UserAttributes)[]
+        const url = new URL(`${getRoot()}/scrolls/${scroll.id}?fields[users]=${fields.join(',')}`)
+        ScrollController.get(ctx, url)
+        const included = (ctx.response.body as Response)?.included as Resource[]
+        const authors = included.filter(item => item.type === 'users') as UserResource[]
+        const authorAttributes = authors.map(author => author.attributes).filter(attr => attr !== undefined)
+
+        expect(ctx.response.status).toBe(200)
+        for (const author of authorAttributes) {
+          for (const field of fields) {
+            expect(author[field]).toEqual(object[field])
           }
         }
       }

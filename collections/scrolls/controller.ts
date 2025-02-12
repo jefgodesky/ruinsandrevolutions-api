@@ -26,6 +26,11 @@ class ScrollController {
     if (full === null) throw createHttpError(Status.InternalServerError)
     sendJSON(ctx, scrollToScrollResponse(full, fields))
   }
+
+  static get (ctx: Context, url?: URL) {
+    const fields = urlToFields(url ?? ctx)
+    sendJSON(ctx, scrollToScrollResponse(ctx.state.scroll, fields))
+  }
 }
 
 export default ScrollController
