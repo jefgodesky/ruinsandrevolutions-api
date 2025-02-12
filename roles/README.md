@@ -56,6 +56,10 @@ With this, a user has permission to view any scroll.
 
 With this, a user has permission to update any scroll.
 
+### `scale:delete`
+
+With this, a user has permission to delete any scroll.
+
 ### `scroll:author:read`
 
 With this, a user has permission to view any scroll that she is
@@ -71,6 +75,14 @@ she is an author of. Note that a user who has `scroll:update` can
 also make changes to scrolls that she has authored, even if she does
 not have `scroll:author:update`. This is  only meaningful for users
 who do not have `scroll:update`.
+
+### `scroll:author:delete`
+
+With this, a user has permission to delete any scroll that
+she is an author of. Note that a user who has `scroll:delete` can
+also delete scrolls that she has authored, even if she does
+not have `scroll:author:delete`. This is  only meaningful for users
+who do not have `scroll:delete`.
 
 ## Users
 
