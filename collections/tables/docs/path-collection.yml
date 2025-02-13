@@ -1,0 +1,29 @@
+post:
+  tags:
+    - Tables
+  summary: Add a new table
+  description: This endpoint allows authenticated users to create new random tables.
+  operationId: createTable
+  parameters:
+    - $ref: "./schemas.yml#/TableFields"
+  security:
+    - bearerAuth: []
+  requestBody:
+    description: Create a new random table
+    content:
+      application/json:
+        schema:
+          $ref: "./schemas.yml#/TableCreation"
+  responses:
+    200:
+      description: New table created.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yml#/TableResponse"
+    400:
+      description: |
+        If you're receiving this error response, the most likely cause
+        is sending something other than a `TableCreation` body.
+    401:
+      description: Only authenticated users can create tables.

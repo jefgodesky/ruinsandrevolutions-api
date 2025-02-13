@@ -6,6 +6,7 @@ import AccountRouter from './collections/accounts/router.ts'
 import AuthRouter from './collections/auth/router.ts'
 import ScaleRouter from './collections/scales/router.ts'
 import ScrollRouter from './collections/scrolls/router.ts'
+import TableRouter from './collections/tables/router.ts'
 import UserRouter from './collections/users/router.ts'
 
 import loadRouteParams from './middlewares/load/route-params.ts'
@@ -22,6 +23,7 @@ const routers: Record<string, Router> = {
   auth: AuthRouter.router,
   scales: ScaleRouter,
   scrolls: ScrollRouter,
+  tables: TableRouter,
   users: UserRouter
 }
 

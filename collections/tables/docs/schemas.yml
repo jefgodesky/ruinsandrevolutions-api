@@ -1,0 +1,250 @@
+TableAttributes:
+  description: The fields associated with a table.
+  type: object
+  properties:
+    slug:
+      type: string
+      description: A slugified string that uniquely identifies this table.
+      pattern: '^[a-z0-9-]+$'
+      example: taking-action
+    name:
+      type: string
+      description: The name of this table.
+      example: Taking Action
+    description:
+      type: string
+      description: A short description of this table.
+      example: The standard random table for taking action.
+    body:
+      type: string
+      description: Longer text to more fully explain how the table works. This can include Markdown.
+    attribution:
+      type: string
+      description: |
+        When you submit a table using this endpoint, you’re agreeing to share
+        it under a CC-BY-SA 4.0 International License. With this field, you can
+        include any necessary attributions from other CC-BY-SA-licensed works
+        that you have built on. Anyone who builds on this table should include
+        everything in this attribution field _plus_ an attribution to you.
+    methods:
+      description: |
+        This field describes the various ways that the table could
+        be rolled. For example, the standard _Taking Action_ table
+        can be rolled normally (`2d6 + Ability`), with advantage
+        (`3d6kh2 + Ability`) or with disadvantage (`3d6kl2 + Ability`).
+        Many tables will just have one, but this is defined as a
+        dictionary to support more complex use cases.
+        
+        If you have a method with the key `normal`, that will be used
+        by default (when no other method is specified). Otherwise the
+        first method will be used.
+      type: object
+      additionalProperties:
+        $ref: "#/TableRollMethod"
+    rows:
+      type: array
+      items:
+        $ref: "#/TableRow"
+    created:
+      type: string
+      format: date-time
+      description: When this table was created.
+    updated:
+      type: string
+      format: date-time
+      description: When this table was most recently updated.
+TableResource:
+  description: The full JSON:API resource describing a table.
+  type: object
+  required: [type, id]
+  properties:
+    type:
+      type: string
+      example: "tables"
+    id:
+      $ref: "../../../docs/schemas.yml#/UUID"
+    attributes:
+      $ref: "#/TableAttributes"
+    relationships:
+      type: object
+      properties:
+        authors:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                description: |
+                  Each pair of type and ID refers to an object provided in
+                  the top-level `included` property.
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: users
+                  id:
+                    $ref: "../../../docs/schemas.yml#/UUID"
+TableResponse:
+  description: A JSON:API response that returns a single table.
+  type: object
+  properties:
+    jsonapi:
+      $ref: "../../../docs/schemas.yml#/JSONAPIHeader"
+    links:
+      $ref: "../../../docs/schemas.yml#/Links"
+    data:
+      $ref: "#/TableResource"
+    included:
+      type: array
+      items:
+        $ref: "../../users/docs/schemas.yml#/IncludedUser"
+TableCreation:
+  description: The object that a client must provide to create a new table.
+  type: object
+  required: [data]
+  properties:
+    data:
+      type: object
+      required: [type, attributes]
+      properties:
+        type:
+          type: string
+          example: "tables"
+        attributes:
+          description: The fields associated with a table.
+          required: [name, start]
+          type: object
+          properties:
+            slug:
+              type: string
+              description: A slugified string that uniquely identifies this table.
+              pattern: '^[a-z0-9-]+$'
+              example: alarm
+            name:
+              type: string
+              description: The name of this table.
+              example: Alarm
+            description:
+              type: string
+              description: A short description of this table.
+              example: When will the guards become aware that there is an intruder in the manor?
+            body:
+              type: string
+              description: Longer text to more fully explain how the table works. This can include Markdown.
+            attribution:
+              type: string
+              description: |
+                When you submit a table using this endpoint, you’re agreeing to share
+                it under a CC-BY-SA 4.0 International License. With this field, you can
+                include any necessary attributions from other CC-BY-SA-licensed works
+                that you have built on. Anyone who builds on this table should include
+                everything in this attribution field _plus_ an attribution to you.
+            methods:
+              description: |
+                This field describes the various ways that the table could
+                be rolled. For example, the standard _Taking Action_ table
+                can be rolled normally (`2d6 + Ability`), with advantage
+                (`3d6kh2 + Ability`) or with disadvantage (`3d6kl2 + Ability`).
+                Many tables will just have one, but this is defined as a
+                dictionary to support more complex use cases.
+
+                If you have a method with the key `normal`, that will be used
+                by default (when no other method is specified). Otherwise the
+                first method will be used.
+              type: object
+              additionalProperties:
+                $ref: "#/TableRollMethod"
+            rows:
+              type: array
+              items:
+                $ref: "#/TableRow"
+        relationships:
+          type: object
+          properties:
+            authors:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    description: |
+                      Specify each author by her unique ID string.
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: users
+                      id:
+                        $ref: "../../../docs/schemas.yml#/UUID"
+TableRollMethod:
+  description: |
+    Many tables just have one way to roll on them, but some may have
+    several. A `TableRollMethod` object defines the details of one way
+    that someone could use the table.
+  type: object
+  properties:
+    name:
+      type: string
+      description: A human-readable name for this table roll method.
+    text:
+      $ref: "../../../docs/schemas.yml#/RandomizedString"
+    expr:
+      type: string
+      description: |
+        The dice expression that should be used when someone rolls on
+        this table using this method.
+      example: 2d6 + Intelligence
+TableRow:
+  description: A single row in a random table.
+  type: object
+  properties:
+    min:
+      type: number
+      description: |
+        The lowest number on a roll that will return this result.
+        If not provided, then any number lower than the `max` will
+        return this result.
+    max:
+      type: number
+      description: |
+        The highest number on a roll that will return this result.
+        If not provided, then any number higher than the `min`
+        will return this result.
+    result:
+      $ref: "../../../docs/schemas.yml#/Note"
+TableID:
+  name: tableID
+  in: path
+  description: Table ID or unique slug.
+  required: true
+  schema:
+    oneOf:
+      - $ref: "../../../docs/schemas.yml#/UUID"
+      - type: string
+  examples:
+    uuidExample:
+      summary: Example UUID
+      value: dd486183-17f9-52e0-92a9-45ff579bdeea
+    usernameExample:
+      summary: Example slug
+      value: taking-action
+TableFields:
+  name: fields[tables]
+  in: query
+  description: |
+    This optional parameter is a comma-separated list of the attributes
+    that you would like to receive back for the table requested. Possible
+    values include any combination of `slug`, `name`, `description`,
+    `body`, `attribution`, `start`, `notes`, `created`, and `updated`.
+  schema:
+    type: string
+  examples:
+    summaryExample:
+      summary: Fields you might use for a summary, card, or search result
+      value: slug,name,description
+    datesExample:
+      summary: Just the date fields
+      value: created,updated
+    rows:
+      summary: Just the rows
+      value: rows
