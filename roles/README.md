@@ -84,6 +84,12 @@ also delete scrolls that she has authored, even if she does
 not have `scroll:author:delete`. This is  only meaningful for users
 who do not have `scroll:delete`.
 
+## Tables
+
+### `table:create`
+
+With this, a user has permission to create a new random table.
+
 ## Users
 
 ### `user:read`
