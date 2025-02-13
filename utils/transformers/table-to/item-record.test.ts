@@ -11,7 +11,7 @@ describe('tableToItemRecord', () => {
     const copiedFields: Array<keyof Table & keyof ItemRecord> = ['id', 'name', 'slug', 'description', 'body', 'attribution', 'created', 'updated']
 
     expect(actual.type).toBe('table')
-    expect(actual.data).toEqual({ rolls: table.rolls, rows: table.rows })
+    expect(actual.data).toEqual({ methods: table.methods, rows: table.rows })
     for (const field of copiedFields) {
       expect(actual[field]).toEqual(table[field])
     }

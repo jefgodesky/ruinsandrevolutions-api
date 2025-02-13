@@ -10,10 +10,10 @@ describe('tableCreationToItemRecord', () => {
     const post = createTableCreation()
     const actual = tableCreationToItemRecord(post)
     const copiedFields: Array<keyof TableAttributes & keyof ItemRecord> = ['name', 'slug', 'description', 'body', 'attribution', 'created', 'updated']
-    const { rows, rolls } = post.data.attributes
+    const { rows, methods } = post.data.attributes
 
     expect(actual.type).toBe('table')
-    expect(actual.data).toEqual({ rows, rolls })
+    expect(actual.data).toEqual({ rows, methods })
     for (const field of copiedFields) {
       expect(actual[field]).toEqual(post.data.attributes[field])
     }

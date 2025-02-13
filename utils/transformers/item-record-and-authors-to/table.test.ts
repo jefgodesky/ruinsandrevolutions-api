@@ -7,13 +7,13 @@ import { createTableAttributes } from '../../../types/table-attributes.ts'
 import itemRecordAndAuthorsToTable from './table.ts'
 
 describe('itemRecordAndAuthorsToTable', () => {
-  const { rolls, rows, ...attributes } = createTableAttributes()
+  const { methods, rows, ...attributes } = createTableAttributes()
   const authors = [createUser()]
   const copiedFields: Array<keyof Table & keyof ItemRecord> = ['id', 'name', 'slug', 'description', 'body', 'attribution', 'created', 'updated']
   const record: ItemRecord = {
     id: crypto.randomUUID(),
     type: 'table',
-    data: JSON.parse(JSON.stringify({ rolls, rows })),
+    data: JSON.parse(JSON.stringify({ methods, rows })),
     ...attributes
   }
 
@@ -23,7 +23,7 @@ describe('itemRecordAndAuthorsToTable', () => {
     expect(isTable(actual)).toBe(true)
     expect(actual.authors).toHaveLength(authors.length)
     expect(actual.authors[0].id).toBe(authors[0].id)
-    expect(actual.rolls).toEqual(rolls)
+    expect(actual.methods).toEqual(methods)
     expect(actual.rows).toEqual(rows)
     for (const field of copiedFields) {
       expect(actual[field]).toEqual(record[field])

@@ -15,7 +15,7 @@ describe('isTable', () => {
   it('returns true if given a Table object', () => {
     const objects = getAllFieldCombinations(createTable())
     for (const object of objects) {
-      expect(isTable(object)).toBe(hasAllProperties(object, ['id', 'name', 'rolls', 'rows', 'authors']))
+      expect(isTable(object)).toBe(hasAllProperties(object, ['id', 'name', 'methods', 'rows', 'authors']))
     }
   })
 

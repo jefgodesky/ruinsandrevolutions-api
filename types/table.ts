@@ -27,7 +27,7 @@ const isTablePartial = (candidate: unknown): candidate is Partial<Table> => {
 
 const isTable = (candidate: unknown): candidate is Table => {
   if (!isTablePartial(candidate)) return false
-  return hasAllProperties(candidate, ['id', 'name', 'rolls', 'rows', 'authors'])
+  return hasAllProperties(candidate, ['id', 'name', 'methods', 'rows', 'authors'])
 }
 
 export {

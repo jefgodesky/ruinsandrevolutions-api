@@ -1,10 +1,10 @@
 import type ItemRecord from '../../../types/item-record.ts'
 import type Table from '../../../types/table.ts'
+import type TableRollMethod from '../../../types/table-roll-method.ts'
 import type TableRow from '../../../types/table-row.ts'
-import type Note from '../../../types/note.ts'
 
 const tableToItemRecord = (table: Table): ItemRecord => {
-  const data: { rolls: Note[], rows: TableRow[] } = { rolls: table.rolls, rows: table.rows }
+  const data: { methods: Record<string, TableRollMethod>, rows: TableRow[] } = { methods: table.methods, rows: table.rows }
 
   return {
     id: table.id,
