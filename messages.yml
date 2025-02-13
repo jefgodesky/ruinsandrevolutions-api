@@ -4,6 +4,7 @@ en-us:
   endpoint_not_found: Endpoint not found.
   invalid_scale_creation: Request body is not a valid ScaleCreation object.
   invalid_scroll_creation: Request body is not a valid ScrollCreation object.
+  invalid_table_creation: Request body is not a valid TableCreation object.
   invalid_token_creation: Request body is not a valid TokenCreation object.
   invalid_scale_patch: Request body is not a valid ScalePatch object.
   invalid_scroll_patch: Request body is not a valid ScrollPatch object.

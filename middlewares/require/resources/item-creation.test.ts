@@ -4,15 +4,17 @@ import { HttpError, Status } from '@oak/oak'
 import { createMockContext } from '@oak/oak/testing'
 import ScaleCreation, { createScaleCreation } from '../../../types/scale-creation.ts'
 import ScrollCreation, { createScrollCreation } from '../../../types/scroll-creation.ts'
+import TableCreation, { createTableCreation } from '../../../types/table-creation.ts'
 import createNextSpy from '../../../utils/testing/create-next-spy.ts'
 import getMessage from '../../../utils/get-message.ts'
 import requireItemCreation from './item-creation.ts'
 
 describe('requireItemCreation', () => {
   it('proceeds if given an item creation object', async () => {
-    const posts: [ScaleCreation | ScrollCreation, string][] = [
+    const posts: [ScaleCreation | ScrollCreation | TableCreation, string][] = [
       [createScaleCreation(), 'invalid_scale_creation'],
-      [createScrollCreation(), 'invalid_scroll_creation']
+      [createScrollCreation(), 'invalid_scroll_creation'],
+      [createTableCreation(), 'invalid_table_creation']
     ]
 
     for (const [itemCreation, errKey] of posts) {
