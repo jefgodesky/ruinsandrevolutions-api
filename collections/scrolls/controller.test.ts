@@ -9,7 +9,7 @@ import ScrollAttributes, { createScrollAttributes } from '../../types/scroll-att
 import ScrollCreation, { createScrollCreation } from '../../types/scroll-creation.ts'
 import type ScrollPatch from '../../types/scroll-patch.ts'
 import type ScrollResource from '../../types/scroll-resource.ts'
-import User, {createUser} from '../../types/user.ts'
+import User, { createUser } from '../../types/user.ts'
 import UserAttributes, { createUserAttributes } from '../../types/user-attributes.ts'
 import type UserResource from '../../types/user-resource.ts'
 import DB from '../../DB.ts'
