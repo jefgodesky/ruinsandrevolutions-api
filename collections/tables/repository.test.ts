@@ -5,6 +5,7 @@ import type User from '../../types/user.ts'
 import { isTable } from '../../types/table.ts'
 import { createTableCreation } from '../../types/table-creation.ts'
 import DB from '../../DB.ts'
+import setupTables from '../../utils/testing/setup-tables.ts'
 import setupUser from '../../utils/testing/setup-user.ts'
 import TableRepository from './repository.ts'
 
@@ -44,6 +45,30 @@ describe('TableRepository', () => {
       await repository.create(createTableCreation(undefined, authors))
       const authorCheck = await DB.query<{ id: string }>('SELECT id FROM item_authors')
       expect(authorCheck.rowCount).toBe(2)
+    })
+  })
+
+  describe('get', () => {
+    it('returns null if item does not exist', async () => {
+      const actual = await repository.get(crypto.randomUUID())
+      expect(actual).toBeNull()
+    })
+
+    it('returns null if slug does not exist', async () => {
+      const actual = await repository.get('nope')
+      expect(actual).toBeNull()
+    })
+
+    it('returns a single item by ID', async () => {
+      const { tables } = await setupTables(1)
+      const actual = await repository.get(tables[0].id!)
+      expect(actual?.id).toBe(tables[0].id)
+    })
+
+    it('returns a single item by slug', async () => {
+      const { tables } = await setupTables(1)
+      const actual = await repository.get(tables[0].slug!)
+      expect(actual?.id).toBe(tables[0].id)
     })
   })
 })

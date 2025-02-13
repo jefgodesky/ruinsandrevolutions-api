@@ -17,4 +17,11 @@ export default class TableRepository {
       ? null
       : itemRecordAndAuthorsToTable(record, authors)
   }
+
+  async get (id: string): Promise<Table | null> {
+    const repository = new ItemRepository()
+    const record = await repository.getByIdOrSlug('table', id)
+    if (record === null) return null
+    return itemRecordAndAuthorsToTable(record, record.authors)
+  }
 }
