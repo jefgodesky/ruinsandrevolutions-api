@@ -53,4 +53,9 @@ export default class TableRepository {
     if (res === null) return null
     return await this.get(table.id)
   }
+
+  async delete (id: string): Promise<void> {
+    const repository = new ItemRepository()
+    return await repository.delete(id)
+  }
 }

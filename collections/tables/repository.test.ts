@@ -125,4 +125,14 @@ describe('TableRepository', () => {
       expect(authorCheck.rowCount).toBe(0)
     })
   })
+
+  describe('delete', () => {
+    it('deletes the table', async () => {
+      const { tables } = await setupTables(1)
+      const id = tables[0].id ?? 'ERROR'
+      await repository.delete(id)
+      const check = await repository.get(id)
+      expect(check).toBeNull()
+    })
+  })
 })
