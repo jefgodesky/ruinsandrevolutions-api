@@ -310,4 +310,14 @@ describe('TableController', () => {
       }
     })
   })
+
+  describe('delete', () => {
+    it('deletes the table', async () => {
+      const { tables } = await setupTables(1)
+      const table = tables[0]
+      const ctx = createMockContext({ state: { table } })
+      await TableController.delete(ctx)
+      expect(ctx.response.status).toBe(204)
+    })
+  })
 })

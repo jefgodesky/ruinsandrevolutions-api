@@ -3,6 +3,7 @@ import type TablePatch from '../../types/table-patch.ts'
 import urlToFields from '../../utils/transformers/url-to/fields.ts'
 import TableRepository from './repository.ts'
 import sendJSON from '../../utils/send-json.ts'
+import sendNoContent from '../../utils/send-no-content.ts'
 import tableToTableResponse from '../../utils/transformers/table-to/table-response.ts'
 import tablesToTablePageResponse from '../../utils/transformers/table-to/table-page-response.ts'
 import getNumberFromQueryString from '../../utils/get-number-from-query-string.ts'
@@ -61,6 +62,12 @@ class TableController {
     if (updated === null) throw createHttpError(Status.InternalServerError)
     const res = tableToTableResponse(updated, fields)
     sendJSON(ctx, res)
+  }
+
+  static async delete (ctx: Context) {
+    const { id } = ctx.state.table
+    await TableController.getRepository().delete(id)
+    sendNoContent(ctx)
   }
 }
 
