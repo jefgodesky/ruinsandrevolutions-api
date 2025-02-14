@@ -268,5 +268,55 @@ describe('/tables', () => {
         expect(res.body.included).toHaveLength(0)
       })
     })
+
+    describe('DELETE', () => {
+      it('returns 401 if not authenticated', async () => {
+        const res = await supertest(getSupertestRoot())
+          .delete(`/tables/${table.id}`)
+          .set({
+            'Content-Type': 'application/vnd.api+json'
+          })
+
+        expect(res.status).toBe(401)
+      })
+
+      it('returns 403 if authenticated without permission', async () => {
+        const { jwt } = await setupUser({ createAccount: false })
+        const res = await supertest(getSupertestRoot())
+          .delete(`/tables/${table.id}`)
+          .set({
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/vnd.api+json'
+          })
+
+        expect(res.status).toBe(403)
+      })
+
+      it('returns 404 if no table has that slug', async () => {
+        const res = await supertest(getSupertestRoot())
+          .delete(`/tables/nope`)
+          .set({
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/vnd.api+json'
+          })
+
+        expect(res.status).toBe(404)
+      })
+
+      it('deletes a table', async () => {
+        const res = await supertest(getSupertestRoot())
+          .delete(`/tables/${table.id}`)
+          .set({
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/vnd.api+json'
+          })
+
+        const check = await supertest(getSupertestRoot())
+          .get(`/tables/${table.id}`)
+
+        expect(res.status).toBe(204)
+        expect(check.status).toBe(404)
+      })
+    })
   })
 })

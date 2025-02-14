@@ -53,4 +53,14 @@ router.patch('/:tableId',
     await TableController.update(ctx)
   })
 
+router.delete('/:tableId',
+  loadResource,
+  loadClient,
+  requireTable,
+  requireClient,
+  requirePermissions('table:delete'),
+  async ctx => {
+    await TableController.delete(ctx)
+  })
+
 export default router

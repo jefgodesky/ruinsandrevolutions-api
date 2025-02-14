@@ -55,3 +55,22 @@ patch:
       description: You cannot update a table unless you are one of its authors.
     404:
       description: The requested table could not be found.
+delete:
+  tags:
+    - Tables
+  summary: Delete a table
+  description: This endpoint allows any of a table’s authors to delete that table.
+  operationId: deleteTable
+  parameters:
+    - $ref: "./schemas.yml#/TableID"
+  security:
+    - bearerAuth: [ ]
+  responses:
+    204:
+      description: The table was successfully deleted.
+    401:
+      description: Only authenticated users can delete tables.
+    403:
+      description: You cannot delete a table unless you are one of its authors.
+    404:
+      description: The requested table could not be found.
