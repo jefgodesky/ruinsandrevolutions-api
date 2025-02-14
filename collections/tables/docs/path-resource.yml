@@ -17,3 +17,41 @@ get:
             $ref: "./schemas.yml#/TableResponse"
     404:
       description: The requested table could not be found.
+patch:
+  tags:
+    - Tables
+  summary: Update a table
+  description: |
+    This endpoint allows any of a table’s authors to update that table.
+    This is a patch operation, so any fields not specified will remain as
+    they were.
+  operationId: updateTable
+  parameters:
+    - $ref: "./schemas.yml#/TableID"
+    - $ref: "./schemas.yml#/TableFields"
+    - $ref: "../../users/docs/schemas.yml#/UserFields"
+  security:
+    - bearerAuth: [ ]
+  requestBody:
+    description: Update a table
+    content:
+      application/json:
+        schema:
+          $ref: "./schemas.yml#/TablePatch"
+  responses:
+    200:
+      description: The updated table.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yml#/TableResponse"
+    400:
+      description: |
+        If you're receiving this error response, the most likely cause
+        is sending something other than a `TablePatch` body.
+    401:
+      description: Only authenticated users can update tables.
+    403:
+      description: You cannot update a table unless you are one of its authors.
+    404:
+      description: The requested table could not be found.

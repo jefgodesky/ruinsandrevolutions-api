@@ -135,15 +135,94 @@ TableCreation:
               type: string
               description: A slugified string that uniquely identifies this table.
               pattern: '^[a-z0-9-]+$'
-              example: alarm
+              example: action
             name:
               type: string
               description: The name of this table.
-              example: Alarm
+              example: Taking Action
             description:
               type: string
               description: A short description of this table.
-              example: When will the guards become aware that there is an intruder in the manor?
+              example: This is the standard table used when taking an action.
+            body:
+              type: string
+              description: Longer text to more fully explain how the table works. This can include Markdown.
+            attribution:
+              type: string
+              description: |
+                When you submit a table using this endpoint, you’re agreeing to share
+                it under a CC-BY-SA 4.0 International License. With this field, you can
+                include any necessary attributions from other CC-BY-SA-licensed works
+                that you have built on. Anyone who builds on this table should include
+                everything in this attribution field _plus_ an attribution to you.
+            methods:
+              description: |
+                This field describes the various ways that the table could
+                be rolled. For example, the standard _Taking Action_ table
+                can be rolled normally (`2d6 + Ability`), with advantage
+                (`3d6kh2 + Ability`) or with disadvantage (`3d6kl2 + Ability`).
+                Many tables will just have one, but this is defined as a
+                dictionary to support more complex use cases.
+
+                If you have a method with the key `normal`, that will be used
+                by default (when no other method is specified). Otherwise the
+                first method will be used.
+              type: object
+              additionalProperties:
+                $ref: "#/TableRollMethod"
+            rows:
+              type: array
+              items:
+                $ref: "#/TableRow"
+        relationships:
+          type: object
+          properties:
+            authors:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    description: |
+                      Specify each author by her unique ID string.
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: users
+                      id:
+                        $ref: "../../../docs/schemas.yml#/UUID"
+TablePatch:
+  description: The object that a client must provide to update a table.
+  type: object
+  required: [data]
+  properties:
+    data:
+      type: object
+      required: [type, id attributes]
+      properties:
+        type:
+          type: string
+          example: "tables"
+        id:
+          $ref: "#/TableID"
+        attributes:
+          description: The fields associated with a table.
+          type: object
+          properties:
+            slug:
+              type: string
+              description: A slugified string that uniquely identifies this table.
+              pattern: '^[a-z0-9-]+$'
+              example: action
+            name:
+              type: string
+              description: The name of this table.
+              example: Taking Action
+            description:
+              type: string
+              description: A short description of this table.
+              example: This is the standard table used when taking an action.
             body:
               type: string
               description: Longer text to more fully explain how the table works. This can include Markdown.

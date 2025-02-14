@@ -8,6 +8,7 @@ import requireClient from '../../middlewares/require/client.ts'
 import requireItemCreation from '../../middlewares/require/resources/item-creation.ts'
 import requirePermissions from '../../middlewares/require/permissions.ts'
 import requireTable from '../../middlewares/require/resources/table.ts'
+import requireTablePatchBody from '../../middlewares/require/body/table-patch.ts'
 import getPrefix from '../../utils/get-prefix.ts'
 
 const router = new Router({
@@ -39,6 +40,17 @@ router.get('/:tableId',
   requirePermissions('table:read'),
   ctx => {
     TableController.get(ctx)
+  })
+
+router.patch('/:tableId',
+  requireTablePatchBody,
+  loadResource,
+  loadClient,
+  requireTable,
+  requireClient,
+  requirePermissions('table:update'),
+  async ctx => {
+    await TableController.update(ctx)
   })
 
 export default router

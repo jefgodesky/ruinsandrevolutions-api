@@ -2,7 +2,10 @@ import { describe, beforeEach, afterEach, afterAll, it } from '@std/testing/bdd'
 import { expect } from '@std/expect'
 import supertest from 'supertest'
 import type Table from '../../types/table.ts'
+import type TablePatch from '../../types/table-patch.ts'
+import type TableAttributes from '../../types/table-attributes.ts'
 import type User from '../../types/user.ts'
+import type UserResource from '../../types/user-resource.ts'
 import DB from '../../DB.ts'
 import { createTableCreation } from '../../types/table-creation.ts'
 import getSupertestRoot from '../../utils/testing/get-supertest-root.ts'
@@ -110,6 +113,159 @@ describe('/tables', () => {
           expect(res.body.included[0].id).toBe(user.id)
           expect(res.body.included[0].attributes.name).toBe(user.name)
         }
+      })
+    })
+
+    describe('PATCH', () => {
+      let patch: TablePatch
+      const updatedName = 'Updated Table'
+      const updatedRows = [
+        { min: 1, max: 6, result: { name: 'Result', text: { human: 'You rolled a die.' } } }
+      ]
+
+      beforeEach(() => {
+        patch = {
+          data: {
+            type: 'tables',
+            id: table.id ?? 'ERROR',
+            attributes: {
+              name: updatedName,
+              rows: updatedRows
+            }
+          }
+        }
+      })
+
+      it('returns 400 if not given a valid TablePatch', async () => {
+        const ids = [table.id, table.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/tables/${id}`)
+            .set({
+              Authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send({ a: 1 })
+
+          expect(res.status).toBe(400)
+        }
+      })
+
+      it('returns 401 if not authenticated', async () => {
+        const ids = [table.id, table.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/tables/${id}`)
+            .set({
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send(patch)
+
+          expect(res.status).toBe(401)
+        }
+      })
+
+      it('returns 403 if authenticated without permission', async () => {
+        const { jwt } = await setupUser({ createAccount: false })
+        const ids = [table.id, table.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/tables/${id}`)
+            .set({
+              Authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send(patch)
+
+          expect(res.status).toBe(403)
+        }
+      })
+
+      it('returns 404 if no scale has that ID or slug', async () => {
+        const ids = [crypto.randomUUID(), 'nope']
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/tables/${id}`)
+            .set({
+              Authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send(patch)
+
+          expect(res.status).toBe(404)
+        }
+      })
+
+      it('patches a table', async () => {
+        const ids = [table.id, table.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .patch(`/tables/${id}`)
+            .set({
+              Authorization: `Bearer ${jwt}`,
+              'Content-Type': 'application/vnd.api+json'
+            })
+            .send(patch)
+
+          const untouchedFields = ['slug', 'description', 'body', 'attribution'] as (keyof TableAttributes)[]
+
+          expect(res.status).toBe(200)
+          expect(res.body.data.type).toBe('tables')
+          expect(res.body.data.id).toBe(table.id)
+          expect(res.body.data.attributes.name).toBe(updatedName)
+          expect(res.body.data.attributes.rows).toEqual(updatedRows)
+          for (const field of untouchedFields) {
+            expect(res.body.data.attributes[field]).toBe(table[field])
+          }
+        }
+      })
+
+      it('adds authors', async () => {
+        const { user } = await setupUser({ createAccount: false, createToken: false })
+        const res = await supertest(getSupertestRoot())
+          .patch(`/tables/${table.id}`)
+          .set({
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/vnd.api+json'
+          })
+          .send({
+            data: {
+              type: 'tables',
+              id: table.id ?? 'ERROR',
+              attributes: {},
+              relationships: {
+                authors: {
+                  data: [
+                    ...table.authors.map(author => ({ type: 'users', id: author.id ?? 'ERROR' } as UserResource)),
+                    { type: 'users', id: user.id } as UserResource
+                  ]
+                }
+              }
+            }
+          })
+
+        expect(res.body.data.relationships.authors.data).toHaveLength(2)
+        expect(res.body.included).toHaveLength(2)
+      })
+
+      it('removes authors', async () => {
+        const res = await supertest(getSupertestRoot())
+          .patch(`/tables/${table.id}`)
+          .set({
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/vnd.api+json'
+          })
+          .send({
+            data: {
+              type: 'tables',
+              id: table.id ?? 'ERROR',
+              attributes: {},
+              relationships: {authors: {data: []}}
+            }
+          })
+
+        expect(res.body.data.relationships.authors.data).toHaveLength(0)
+        expect(res.body.included).toHaveLength(0)
       })
     })
   })
