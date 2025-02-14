@@ -15,6 +15,7 @@ roles:
     - scroll:author:update
     - scroll:author:delete
     - table:create
+    - table:author:update
     - user:self:update
     - user:self:destroy
     - role:self:listed:grant

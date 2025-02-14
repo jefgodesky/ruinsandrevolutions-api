@@ -94,6 +94,10 @@ With this, a user has permission to create a new random table.
 
 With this, a user has permission to view any table.
 
+### `table:update`
+
+With this, a user has permission to update any table.
+
 ### `table:author:read`
 
 With this, a user has permission to view any table that she is
@@ -101,6 +105,14 @@ an author of. Note that a user who has `table:read` can also view
 tables that she has authored, even if she does not have
 `table:author:read`. This is  only meaningful for users who do
 not have `table:read`.
+
+### `table:author:update`
+
+With this, a user has permission to make changes to any table that
+she is an author of. Note that a user who has `table:update` can
+also make changes to tables that she has authored, even if she does
+not have `table:author:update`. This is  only meaningful for users
+who do not have `table:update`.
 
 ## Users
 
