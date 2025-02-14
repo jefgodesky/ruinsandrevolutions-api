@@ -16,8 +16,8 @@ const setupScrolls = async (n: number, names: string[] = []): Promise<{ user: Us
 
   for (const [index, name] of names.entries()) {
     const slug = `scroll-${(index + 1).toString().padStart(counterLength, '0')}`
-    const scale = await repository.create(createScrollCreation({ slug, name }, [user]))
-    if (scale !== null) scrolls.push(scale)
+    const scroll = await repository.create(createScrollCreation({ slug, name }, [user]))
+    if (scroll !== null) scrolls.push(scroll)
   }
 
   return { user, jwt: jwt!, scrolls }

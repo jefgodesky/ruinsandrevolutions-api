@@ -235,7 +235,7 @@ TableFields:
     This optional parameter is a comma-separated list of the attributes
     that you would like to receive back for the table requested. Possible
     values include any combination of `slug`, `name`, `description`,
-    `body`, `attribution`, `start`, `notes`, `created`, and `updated`.
+    `body`, `attribution`, `methods`, `rows`, `created`, and `updated`.
   schema:
     type: string
   examples:

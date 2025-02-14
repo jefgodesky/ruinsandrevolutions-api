@@ -16,8 +16,8 @@ const setupTables = async (n: number, names: string[] = []): Promise<{ user: Use
 
   for (const [index, name] of names.entries()) {
     const slug = `table-${(index + 1).toString().padStart(counterLength, '0')}`
-    const scale = await repository.create(createTableCreation({ slug, name }, [user]))
-    if (scale !== null) tables.push(scale)
+    const table = await repository.create(createTableCreation({ slug, name }, [user]))
+    if (table !== null) tables.push(table)
   }
 
   return { user, jwt: jwt!, tables }

@@ -1,0 +1,19 @@
+get:
+  tags:
+    - Tables
+  summary: Retrieve a table
+  description: This endpoint retrieves a table.
+  operationId: getTable
+  parameters:
+    - $ref: "./schemas.yml#/TableID"
+    - $ref: "./schemas.yml#/TableFields"
+    - $ref: "../../users/docs/schemas.yml#/UserFields"
+  responses:
+    200:
+      description: The table requested.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yml#/TableResponse"
+    404:
+      description: The requested table could not be found.

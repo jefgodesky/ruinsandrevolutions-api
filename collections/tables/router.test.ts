@@ -1,13 +1,17 @@
 import { describe, beforeEach, afterEach, afterAll, it } from '@std/testing/bdd'
 import { expect } from '@std/expect'
 import supertest from 'supertest'
+import type Table from '../../types/table.ts'
 import type User from '../../types/user.ts'
 import DB from '../../DB.ts'
 import { createTableCreation } from '../../types/table-creation.ts'
 import getSupertestRoot from '../../utils/testing/get-supertest-root.ts'
+import setupTables from '../../utils/testing/setup-tables.ts'
 import setupUser from '../../utils/testing/setup-user.ts'
 
 describe('/tables', () => {
+  let tables: Table[]
+  let table: Table
   let user: User
   let jwt: string | undefined
 
@@ -57,6 +61,49 @@ describe('/tables', () => {
         expect(res.body.data.id).toBeDefined()
         expect(res.body.data.relationships.authors.data).toHaveLength(1)
         expect(res.body.data.relationships.authors.data[0].id).toBe(user.id)
+      })
+    })
+  })
+
+  describe('Resource [/tables/:tableId]', () => {
+    beforeEach(async () => {
+      ({ tables, user, jwt } = await setupTables(1))
+      table = tables[0]
+    })
+
+    describe('GET', () => {
+      it('returns 404 if no table has that ID or slug', async () => {
+        const ids = [crypto.randomUUID(), 'nope']
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .get(`/tables/${id}`)
+
+          expect(res.status).toBe(404)
+        }
+      })
+
+      it('returns a table', async () => {
+        const ids = [table.id, table.slug]
+        for (const id of ids) {
+          const res = await supertest(getSupertestRoot())
+            .get(`/tables/${id}`)
+
+          console.log({
+            table,
+            id,
+            status: res.status,
+            request: `GET ${getSupertestRoot()}/tables/${id}`
+          })
+
+          expect(res.status).toBe(200)
+          expect(res.body.data.type).toBe('tables')
+          expect(res.body.data.id).toBe(table.id)
+          expect(res.body.data.attributes.name).toBe(table.name)
+          expect(res.body.data.relationships.authors.data).toHaveLength(table.authors.length)
+          expect(res.body.included[0].type).toBe('users')
+          expect(res.body.included[0].id).toBe(user.id)
+          expect(res.body.included[0].attributes.name).toBe(user.name)
+        }
       })
     })
   })
