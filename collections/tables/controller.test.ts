@@ -1,11 +1,13 @@
 import { describe, beforeEach, afterEach, afterAll, it } from '@std/testing/bdd'
 import { expect } from '@std/expect'
+import { type Context } from '@oak/oak'
 import { createMockContext } from '@oak/oak/testing'
 import type Resource from '../../types/resource.ts'
 import type Response from '../../types/response.ts'
-import { createTable } from '../../types/table.ts'
+import Table, { createTable } from '../../types/table.ts'
 import TableAttributes, { createTableAttributes } from '../../types/table-attributes.ts'
 import TableCreation, { createTableCreation } from '../../types/table-creation.ts'
+import type TablePatch from '../../types/table-patch.ts'
 import type TableResource from '../../types/table-resource.ts'
 import User, { createUser } from '../../types/user.ts'
 import UserAttributes, { createUserAttributes } from '../../types/user-attributes.ts'
@@ -16,6 +18,7 @@ import setupTables from '../../utils/testing/setup-tables.ts'
 import setupUser from '../../utils/testing/setup-user.ts'
 import getAllFieldCombinations from '../../utils/testing/get-all-field-combinations.ts'
 import getRoot from '../../utils/get-root.ts'
+import stringToReadableStream from '../../utils/transformers/string-to/readable-stream.ts'
 import TableController from './controller.ts'
 
 describe('TableController', () => {
@@ -195,6 +198,116 @@ describe('TableController', () => {
       expect(data[0].attributes).toHaveProperty('slug', 'table-04')
       expect(data[1].attributes).toHaveProperty('slug', 'table-03')
       expect(data[2].attributes).toHaveProperty('slug', 'table-02')
+    })
+  })
+
+  describe('update', () => {
+    let ctx: Context
+    let table: Table
+    let patch: TablePatch
+    const attributes = createTableAttributes()
+    const updatedName = 'Updated Table'
+    const updatedRows = [
+      { min: 1, max: 6, result: { name: 'Result', text: { human: 'You rolled a die.' } } }
+    ]
+
+    beforeEach(async () => {
+      const { tables } = await setupTables(1)
+      table = tables[0]
+      patch = {
+        data: {
+          type: 'tables',
+          id: table.id ?? 'ERROR',
+          attributes: {
+            name: updatedName,
+            rows: [{ min: 1, max: 6, result: { name: 'Result', text: { human: 'You rolled a die.' } } }]
+          }
+        }
+      }
+
+      ctx = createMockContext({
+        state: { table },
+        body: stringToReadableStream(JSON.stringify(patch))
+      })
+    })
+
+    it('updates the table', async () => {
+      await TableController.update(ctx)
+      const data = (ctx.response.body as Response)?.data as TableResource
+      const untouchedFields = ['slug', 'description', 'body', 'notes'] as (keyof TableAttributes)[]
+
+      expect(ctx.response.status).toBe(200)
+      expect(data).toBeDefined()
+      expect(data.type).toBe('tables')
+      expect(data.attributes).toHaveProperty('name', updatedName)
+      expect(data.attributes?.rows).toEqual(updatedRows)
+      for (const field of untouchedFields) {
+        expect((data.attributes as TableAttributes)[field]).toBe(table[field])
+      }
+    })
+
+    it('adds authors', async () => {
+      const { user } = await setupUser({ createAccount: false, createToken: false })
+      const patch = {
+        data: {
+          type: 'tables',
+          id: table.id ?? 'ERROR',
+          attributes: {},
+          relationships: {
+            authors: {
+              data: [
+                ...table.authors.map(author => ({ type: 'users', id: author.id ?? 'ERROR' } as UserResource)),
+                { type: 'users', id: user.id } as UserResource
+              ]
+            }
+          }
+        }
+      }
+
+      ctx = createMockContext({
+        state: { table },
+        body: stringToReadableStream(JSON.stringify(patch))
+      })
+
+      await TableController.update(ctx)
+      const data = (ctx.response.body as Response)?.data as TableResource
+      expect(data.relationships?.authors?.data).toHaveLength(2)
+    })
+
+    it('removes authors', async () => {
+      const patch = {
+        data: {
+          type: 'tables',
+          id: table.id ?? 'ERROR',
+          attributes: {},
+          relationships: { authors: { data: [] } }
+        }
+      }
+
+      ctx = createMockContext({
+        state: { table },
+        body: stringToReadableStream(JSON.stringify(patch))
+      })
+
+      await TableController.update(ctx)
+      const data = (ctx.response.body as Response)?.data as TableResource
+      expect(data.relationships?.authors?.data).toHaveLength(0)
+    })
+
+    it('returns a sparse fieldset', async () => {
+      const objects = getAllFieldCombinations(attributes)
+      for (const object of objects) {
+        const fields = Object.keys(object) as (keyof TableAttributes)[]
+        const url = new URL(`${getRoot()}/tables/${table.id}?fields[tables]=${fields.join(',')}`)
+        await TableController.update(ctx, url)
+        const data = (ctx.response.body as Response)?.data as TableResource
+        const receivedAttributes = data.attributes as TableAttributes
+
+        expect(ctx.response.status).toBe(200)
+        for (const field of fields) {
+          expect(receivedAttributes[field] === undefined).toEqual(object[field] === undefined)
+        }
+      }
     })
   })
 })

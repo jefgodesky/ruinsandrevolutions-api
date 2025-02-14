@@ -1,4 +1,5 @@
 import { Context, Status, createHttpError } from '@oak/oak'
+import type TablePatch from '../../types/table-patch.ts'
 import urlToFields from '../../utils/transformers/url-to/fields.ts'
 import TableRepository from './repository.ts'
 import sendJSON from '../../utils/send-json.ts'
@@ -7,6 +8,7 @@ import tablesToTablePageResponse from '../../utils/transformers/table-to/table-p
 import getNumberFromQueryString from '../../utils/get-number-from-query-string.ts'
 import urlToItemSorting from '../../utils/transformers/url-to/item-sorting.ts'
 import urlToItemFiltering from '../../utils/transformers/url-to/item-filtering.ts'
+import patchTable from '../../utils/patching/table.ts'
 
 class TableController {
   private static repository: TableRepository
@@ -47,6 +49,17 @@ class TableController {
     const where = query.length > 0 ? query : undefined
     const { total, rows } = await TableController.getRepository().list(limit, offset, where, sort, params)
     const res = tablesToTablePageResponse(rows, total, offset ?? 0, limit, fields)
+    sendJSON(ctx, res)
+  }
+
+  static async update (ctx: Context, url?: URL) {
+    const src = url ?? ctx.request.url
+    const fields = urlToFields(src)
+    const patch = await ctx.request.body.json() as TablePatch
+    const patched = patchTable(ctx.state.table, patch)
+    const updated = await TableController.getRepository().update(patched)
+    if (updated === null) throw createHttpError(Status.InternalServerError)
+    const res = tableToTableResponse(updated, fields)
     sendJSON(ctx, res)
   }
 }
