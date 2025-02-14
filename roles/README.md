@@ -98,6 +98,10 @@ With this, a user has permission to view any table.
 
 With this, a user has permission to update any table.
 
+### `table:delete`
+
+With this, a user has permission to delete any table.
+
 ### `table:author:read`
 
 With this, a user has permission to view any table that she is
@@ -113,6 +117,14 @@ she is an author of. Note that a user who has `table:update` can
 also make changes to tables that she has authored, even if she does
 not have `table:author:update`. This is  only meaningful for users
 who do not have `table:update`.
+
+### `table:author:delete`
+
+With this, a user has permission to delete any table that
+she is an author of. Note that a user who has `table:delete` can
+also delete tables that she has authored, even if she does
+not have `table:author:delete`. This is  only meaningful for users
+who do not have `table:delete`.
 
 ## Users
 
