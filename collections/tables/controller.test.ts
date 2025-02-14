@@ -12,6 +12,7 @@ import UserAttributes, { createUserAttributes } from '../../types/user-attribute
 import type UserResource from '../../types/user-resource.ts'
 import DB from '../../DB.ts'
 import { createFields } from '../../types/fields.ts'
+import setupTables from '../../utils/testing/setup-tables.ts'
 import setupUser from '../../utils/testing/setup-user.ts'
 import getAllFieldCombinations from '../../utils/testing/get-all-field-combinations.ts'
 import getRoot from '../../utils/get-root.ts'
@@ -137,6 +138,63 @@ describe('TableController', () => {
           }
         }
       }
+    })
+  })
+
+  describe('list', () => {
+    it('shows your tables', async () => {
+      const { user, tables } = await setupTables(3)
+      const ctx = createMockContext({ state: { client: user } })
+      await TableController.list(ctx)
+      const data = (ctx.response.body as Response)?.data as TableResource[]
+
+      expect(ctx.response.status).toBe(200)
+      expect(data).toHaveLength(3)
+      for (const [index, expected] of tables.reverse().entries()) {
+        expect(data[index].type).toBe('tables')
+        expect(data[index].id).toBe(expected.id)
+        expect(data[index].attributes).toHaveProperty('name', expected.name)
+      }
+    })
+
+    it('can be sorted', async () => {
+      const { user } = await setupTables(3, ['C', 'A', 'B'])
+      const ctx = createMockContext({ state: { client: user } })
+      const url = new URL('http://localhost:8001/v1/tables?sort=name')
+      await TableController.list(ctx, url)
+      const data = (ctx.response.body as Response)?.data as TableResource[]
+
+      expect(ctx.response.status).toBe(200)
+      expect(data).toHaveLength(3)
+      expect(data[0].attributes).toHaveProperty('name', 'A')
+      expect(data[1].attributes).toHaveProperty('name', 'B')
+      expect(data[2].attributes).toHaveProperty('name', 'C')
+    })
+
+    it('can be filtered', async () => {
+      const { user } = await setupTables(3, ['C', 'A', 'B'])
+      const ctx = createMockContext({ state: { client: user } })
+      const url = new URL('http://localhost:8001/v1/tables?filter[name]=A')
+      await TableController.list(ctx, url)
+      const data = (ctx.response.body as Response)?.data as TableResource[]
+
+      expect(ctx.response.status).toBe(200)
+      expect(data).toHaveLength(1)
+    })
+
+    it('paginates results', async () => {
+      const total = 5
+      const limit = 3
+      const { user } = await setupTables(total)
+      const ctx = createMockContext({ state: { client: user } })
+      const url = new URL(`http://localhost:8001/v1/tables?limit=${limit}&offset=1`)
+      await TableController.list(ctx, url)
+      const data = (ctx.response.body as Response)?.data as TableResource[]
+
+      expect(data).toHaveLength(limit)
+      expect(data[0].attributes).toHaveProperty('slug', 'table-04')
+      expect(data[1].attributes).toHaveProperty('slug', 'table-03')
+      expect(data[2].attributes).toHaveProperty('slug', 'table-02')
     })
   })
 })
