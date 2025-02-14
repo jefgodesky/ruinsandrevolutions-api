@@ -97,4 +97,32 @@ describe('TableRepository', () => {
       expect(p2.rows.map((table: Table) => table.id!)).toEqual([tables[tables.length - 2].id])
     })
   })
+
+  describe('update', () => {
+    const updatedName = 'Updated Table'
+
+    it('updates an item', async () => {
+      const { tables } = await setupTables(1)
+      tables[0].name = updatedName
+      const actual = await repository.update(tables[0])
+      expect(actual?.name).toBe(updatedName)
+    })
+
+    it('adds authors', async () => {
+      const { user } = await setupUser({ createAccount: false, createToken: false })
+      const { tables } = await setupTables(1)
+      tables[0].authors.push(user)
+      await repository.update(tables[0])
+      const authorCheck = await DB.query<{ id: string }>('SELECT id FROM item_authors')
+      expect(authorCheck.rowCount).toBe(2)
+    })
+
+    it('removes authors', async () => {
+      const { tables } = await setupTables(1)
+      tables[0].authors = []
+      await repository.update(tables[0])
+      const authorCheck = await DB.query<{ id: string }>('SELECT id FROM item_authors')
+      expect(authorCheck.rowCount).toBe(0)
+    })
+  })
 })
