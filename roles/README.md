@@ -90,6 +90,18 @@ who do not have `scroll:delete`.
 
 With this, a user has permission to create a new random table.
 
+### `table:read`
+
+With this, a user has permission to view any table.
+
+### `table:author:read`
+
+With this, a user has permission to view any table that she is
+an author of. Note that a user who has `table:read` can also view
+tables that she has authored, even if she does not have
+`table:author:read`. This is  only meaningful for users who do
+not have `table:read`.
+
 ## Users
 
 ### `user:read`

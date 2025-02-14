@@ -5,6 +5,7 @@ roles:
   anonymous:
     - scale:read
     - scroll:read
+    - table:read
     - user:read
   active:
     - scale:create
