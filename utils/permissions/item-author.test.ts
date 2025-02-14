@@ -3,6 +3,7 @@ import { expect } from 'jsr:@std/expect'
 import { createMockContext } from '@oak/oak/testing'
 import { createScale } from '../../types/scale.ts'
 import { createScroll } from '../../types/scroll.ts'
+import { createTable } from '../../types/table.ts'
 import { createUser } from '../../types/user.ts'
 import checkItemAuthorPermission from './item-author.ts'
 
@@ -10,10 +11,13 @@ describe('checkItemAuthorPermission', () => {
   const user = createUser()
   const scale = createScale({ authors: [user] })
   const scroll = createScroll({ authors: [user] })
+  const table = createTable({ authors: [user] })
 
+  // deno-lint-ignore no-explicit-any
   const scenarios: Array<{ state: Record<string, any>, prefix: string }> = [
     { state: { scale }, prefix: 'scale' },
-    { state: { scroll }, prefix: 'scroll' }
+    { state: { scroll }, prefix: 'scroll' },
+    { state: { table }, prefix: 'table' }
   ]
 
   it('returns false if the client does not have the author version', () => {
