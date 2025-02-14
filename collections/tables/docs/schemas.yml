@@ -98,6 +98,22 @@ TableResponse:
       type: array
       items:
         $ref: "../../users/docs/schemas.yml#/IncludedUser"
+TablesResponse:
+  description: A JSON:API response that returns a single table.
+  type: object
+  properties:
+    jsonapi:
+      $ref: "../../../docs/schemas.yml#/JSONAPIHeader"
+    links:
+      $ref: "../../../docs/schemas.yml#/Links"
+    data:
+      type: array
+      items:
+        $ref: "#/TableResource"
+    included:
+      type: array
+      items:
+        $ref: "../../users/docs/schemas.yml#/IncludedUser"
 TableCreation:
   description: The object that a client must provide to create a new table.
   type: object

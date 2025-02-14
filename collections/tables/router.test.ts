@@ -63,6 +63,19 @@ describe('/tables', () => {
         expect(res.body.data.relationships.authors.data[0].id).toBe(user.id)
       })
     })
+
+    describe('GET', () => {
+      it('returns a paginated list of tables', async () => {
+        await setupTables(5)
+        const res = await supertest(getSupertestRoot())
+          .get(`/tables?limit=2&offset=1`)
+
+        expect(res.status).toBe(200)
+        expect(res.body.data).toHaveLength(2)
+        expect(res.body.data[0].attributes).toHaveProperty('slug', 'table-04')
+        expect(res.body.data[1].attributes).toHaveProperty('slug', 'table-03')
+      })
+    })
   })
 
   describe('Resource [/tables/:tableId]', () => {
@@ -87,13 +100,6 @@ describe('/tables', () => {
         for (const id of ids) {
           const res = await supertest(getSupertestRoot())
             .get(`/tables/${id}`)
-
-          console.log({
-            table,
-            id,
-            status: res.status,
-            request: `GET ${getSupertestRoot()}/tables/${id}`
-          })
 
           expect(res.status).toBe(200)
           expect(res.body.data.type).toBe('tables')

@@ -25,6 +25,13 @@ router.post('/',
     await TableController.create(ctx)
   })
 
+router.get('/',
+  loadClient,
+  requirePermissions('table:read'),
+  async ctx => {
+    await TableController.list(ctx)
+  })
+
 router.get('/:tableId',
   loadResource,
   requireTable,

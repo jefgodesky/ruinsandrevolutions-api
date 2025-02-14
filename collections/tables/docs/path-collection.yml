@@ -27,3 +27,43 @@ post:
         is sending something other than a `TableCreation` body.
     401:
       description: Only authenticated users can create tables.
+get:
+  tags:
+    - Tables
+  summary: List tables
+  description: This endpoint allows users to browse tables.
+  operationId: listTables
+  parameters:
+    - $ref: "../../../docs/schemas.yml#/ItemSort"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterName"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterNameStartsWith"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterNameEndsWith"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterNameContains"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterDescription"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterDescriptionStartsWith"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterDescriptionEndsWith"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterDescriptionContains"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterNotes"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterNotesStartsWith"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterNotesEndsWith"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterNotesContains"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorName"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorNameStartsWith"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorNameEndsWith"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorNameContains"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorUsername"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorUsernameStartsWith"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorUsernameEndsWith"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorUsernameContains"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterCreated"
+    - $ref: "../../../docs/schemas.yml#/ItemFilterUpdated"
+    - $ref: "../../../docs/schemas.yml#/Limit"
+    - $ref: "../../../docs/schemas.yml#/Offset"
+  responses:
+    200:
+      description: A list of tables is returned.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yml#/TablesResponse"
+
