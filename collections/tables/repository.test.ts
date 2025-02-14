@@ -2,7 +2,7 @@ import { describe, beforeAll, beforeEach, afterAll, afterEach, it } from 'jsr:@s
 import { expect } from 'jsr:@std/expect'
 import type ItemRecord from '../../types/item-record.ts'
 import type User from '../../types/user.ts'
-import { isTable } from '../../types/table.ts'
+import Table, { isTable } from '../../types/table.ts'
 import { createTableCreation } from '../../types/table-creation.ts'
 import DB from '../../DB.ts'
 import setupTables from '../../utils/testing/setup-tables.ts'
@@ -69,6 +69,32 @@ describe('TableRepository', () => {
       const { tables } = await setupTables(1)
       const actual = await repository.get(tables[0].slug!)
       expect(actual?.id).toBe(tables[0].id)
+    })
+  })
+
+  describe('list', () => {
+    it('returns an empty list if there are no tables', async () => {
+      const actual = await repository.list()
+      expect(actual).toEqual({ total: 0, rows: [] })
+    })
+
+    it('returns all existing tables', async () => {
+      await setupTables(3)
+      const actual = await repository.list()
+      expect(actual.total).toBe(3)
+      expect(actual.rows).toHaveLength(3)
+    })
+
+    it('paginates results', async () => {
+      const { tables } = await setupTables(3)
+      const p1 = await repository.list(1, 0)
+      const p2 = await repository.list(1, 1)
+
+      expect(p1.total).toBe(3)
+      expect(p1.rows.map((table: Table) => table.id!)).toEqual([tables[tables.length - 1].id])
+
+      expect(p2.total).toBe(3)
+      expect(p2.rows.map((table: Table) => table.id!)).toEqual([tables[tables.length - 2].id])
     })
   })
 })
