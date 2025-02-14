@@ -3,10 +3,11 @@ import { expect } from '@std/expect'
 import { createMockContext } from '@oak/oak/testing'
 import type Resource from '../../types/resource.ts'
 import type Response from '../../types/response.ts'
+import { createTable } from '../../types/table.ts'
 import TableAttributes, { createTableAttributes } from '../../types/table-attributes.ts'
 import TableCreation, { createTableCreation } from '../../types/table-creation.ts'
 import type TableResource from '../../types/table-resource.ts'
-import User from '../../types/user.ts'
+import User, { createUser } from '../../types/user.ts'
 import UserAttributes, { createUserAttributes } from '../../types/user-attributes.ts'
 import type UserResource from '../../types/user-resource.ts'
 import DB from '../../DB.ts'
@@ -81,6 +82,58 @@ describe('TableController', () => {
         for (const author of authorAttributes) {
           for (const field of fields.users) {
             expect(author[field] === undefined).toBe(object[field] === undefined)
+          }
+        }
+      }
+    })
+  })
+
+  describe('get', () => {
+    const userAttributes = createUserAttributes()
+    const user = createUser({ ...userAttributes })
+    const attributes = createTableAttributes()
+    const table = createTable({ ...attributes, authors: [user] })
+    const ctx = createMockContext({ state: { table } })
+
+    it('returns the table', () => {
+      TableController.get(ctx)
+      const data = (ctx.response.body as Response)?.data as TableResource
+      expect(ctx.response.status).toBe(200)
+      expect(data).toBeDefined()
+      expect(data.type).toBe('tables')
+      expect(data.attributes).toHaveProperty('name', table.name)
+    })
+
+    it('returns a sparse fieldset', () => {
+      const objects = getAllFieldCombinations(attributes)
+      for (const object of objects) {
+        const fields = Object.keys(object) as (keyof TableAttributes)[]
+        const url = new URL(`${getRoot()}/tables/${table.id}?fields[tables]=${fields.join(',')}`)
+        TableController.get(ctx, url)
+        const data = (ctx.response.body as Response)?.data as TableResource
+        const receivedAttributes = data.attributes as TableAttributes
+
+        expect(ctx.response.status).toBe(200)
+        for (const field of fields) {
+          expect(receivedAttributes[field]).toEqual(object[field])
+        }
+      }
+    })
+
+    it('returns a sparse fieldset (authors)', () => {
+      const objects = getAllFieldCombinations(userAttributes)
+      for (const object of objects) {
+        const fields = Object.keys(object) as (keyof UserAttributes)[]
+        const url = new URL(`${getRoot()}/tables/${table.id}?fields[users]=${fields.join(',')}`)
+        TableController.get(ctx, url)
+        const included = (ctx.response.body as Response)?.included as Resource[]
+        const authors = included.filter(item => item.type === 'users') as UserResource[]
+        const authorAttributes = authors.map(author => author.attributes).filter(attr => attr !== undefined)
+
+        expect(ctx.response.status).toBe(200)
+        for (const author of authorAttributes) {
+          for (const field of fields) {
+            expect(author[field]).toEqual(object[field])
           }
         }
       }

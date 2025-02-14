@@ -26,6 +26,11 @@ class TableController {
     if (full === null) throw createHttpError(Status.InternalServerError)
     sendJSON(ctx, tableToTableResponse(full, fields))
   }
+
+  static get (ctx: Context, url?: URL) {
+    const fields = urlToFields(url ?? ctx)
+    sendJSON(ctx, tableToTableResponse(ctx.state.table, fields))
+  }
 }
 
 export default TableController
