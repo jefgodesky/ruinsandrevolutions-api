@@ -3,7 +3,7 @@ import ScrollController from './controller.ts'
 import loadClient from '../../middlewares/load/client.ts'
 import loadItemCreation from '../../middlewares/load/item-creation.ts'
 import loadBackupAuthor from '../../middlewares/load/backup-author.ts'
-import loadScroll from '../../middlewares/load/scroll.ts'
+import loadResource from '../../middlewares/load/resource.ts'
 import requireClient from '../../middlewares/require/client.ts'
 import requireItemCreation from '../../middlewares/require/resources/item-creation.ts'
 import requireScroll from '../../middlewares/require/resources/scroll.ts'
@@ -34,7 +34,7 @@ router.get('/',
   })
 
 router.get('/:scrollId',
-  loadScroll,
+  loadResource,
   requireScroll,
   loadClient,
   requirePermissions('scroll:read'),
@@ -44,7 +44,7 @@ router.get('/:scrollId',
 
 router.patch('/:scrollId',
   requireScrollPatchBody,
-  loadScroll,
+  loadResource,
   loadClient,
   requireScroll,
   requireClient,
@@ -54,7 +54,7 @@ router.patch('/:scrollId',
   })
 
 router.delete('/:scrollId',
-  loadScroll,
+  loadResource,
   loadClient,
   requireScroll,
   requireClient,
