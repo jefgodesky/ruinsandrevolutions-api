@@ -8,6 +8,7 @@ on:
 env:
   REGISTRY: ghcr.io
   PACKAGE: ghcr.io/${{ github.repository }}:latest
+  COMPOSE: docker compose -f env/prod.yml
 
 jobs:
   deploy:
@@ -44,6 +45,6 @@ jobs:
           script: |
             cd ~/${{ github.event.repository.name }}
             git pull
-            docker compose pull api
-            docker compose down
-            docker compose up -d --build
+            ${{ env.COMPOSE }} pull api
+            ${{ env.COMPOSE }} down
+            ${{ env.COMPOSE }} up -d --build
