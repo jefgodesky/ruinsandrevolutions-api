@@ -1,4 +1,4 @@
-name: ruinsandrevolutions_dev
+name: ruinsandrevolutions_api_dev
 
 volumes:
   db: {}

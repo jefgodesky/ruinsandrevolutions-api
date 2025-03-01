@@ -1,4 +1,4 @@
-name: ruinsandrevolutions_test
+name: ruinsandrevolutions_api_test
 
 volumes:
   db: {}
