@@ -2,7 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 DO $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'ITEM_TYPE') THEN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'item_type') THEN
         CREATE TYPE ITEM_TYPE AS ENUM ('scale', 'scroll', 'table');
     END IF;
 END

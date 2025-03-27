@@ -7,7 +7,6 @@ import { createScale } from '../../types/scale.ts'
 import { createUser } from '../../types/user.ts'
 import getMessage from '../../utils/get-message.ts'
 import requirePermissions from './permissions.ts'
-import {createScaleCreation} from '../../types/scale-creation.ts'
 
 describe('requirePermissions', () => {
   it('proceeds if user has all necessary permissions', async () => {

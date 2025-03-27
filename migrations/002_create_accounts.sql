@@ -2,7 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 DO $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'PROVIDER') THEN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'provider') THEN
         CREATE TYPE PROVIDER AS ENUM ('google', 'discord', 'github');
     END IF;
 END

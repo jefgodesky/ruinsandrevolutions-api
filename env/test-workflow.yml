@@ -1,4 +1,4 @@
-name: api_starter_test_workflow
+name: ruinsandrevolutions_api_test_workflow
 
 volumes:
   test_db: {}
@@ -11,16 +11,8 @@ services:
       - 5433:5432
     volumes:
       - test_db:/var/lib/postgresql/data
-      - ../migrations:/scripts/migrations
-      - ../init.sh:/scripts/init.sh
     env_file:
       - ./test-workflow.postgres.env
-    command: >
-      sh -c "
-      docker-entrypoint.sh postgres &
-      sleep 5 &&
-      sh /scripts/init.sh &&
-      wait"
 
   api:
     build:
@@ -34,9 +26,6 @@ services:
       - ./test-workflow.api.env
     depends_on:
       - postgres
-    command: >
-      sh -c "
-      deno run dev:start"
 
   tests:
     build:

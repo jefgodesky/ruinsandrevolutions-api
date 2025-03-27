@@ -11,16 +11,8 @@ services:
       - 5433:5432
     volumes:
       - db:/var/lib/postgresql/data
-      - ../migrations:/scripts/migrations
-      - ../init.sh:/scripts/init.sh
     env_file:
       - ./test.postgres.env
-    command: >
-      sh -c "
-      docker-entrypoint.sh postgres &
-      sleep 5 &&
-      sh /scripts/init.sh &&
-      wait"
 
   api:
     build:
@@ -34,9 +26,6 @@ services:
       - ./test.api.env
     depends_on:
       - postgres
-    command: >
-      sh -c "
-      deno task dev:start"
 
   tests:
     build:
