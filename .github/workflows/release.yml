@@ -36,16 +36,3 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ env.PACKAGE }}
-
-      - name: SSH and deploy to Droplet
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DROPLET_HOST }}
-          username: ${{ secrets.DROPLET_USER }}
-          key: ${{ secrets.DROPLET_SSH_KEY }}
-          script: |
-            cd ~/${{ github.event.repository.name }}
-            git pull
-            ${{ env.COMPOSE }} pull api
-            ${{ env.COMPOSE }} down
-            ${{ env.COMPOSE }} up -d --build
