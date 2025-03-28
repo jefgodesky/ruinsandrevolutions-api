@@ -7,3 +7,5 @@ The _Ruins & Revolutions_ API provides programmatic access to
 the catalogue of scales, scrolls, tables, and other items that
 _Ruins & Revolutions_ players have developed and shared with
 the community.
+
+* [API Documentation](https://api.ruinsandrevolutions.com/v1/docs)
