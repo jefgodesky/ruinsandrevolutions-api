@@ -1,35 +1,40 @@
-ProviderID:
-  type: string
-  enum: [google, github, discord]
-ProviderResource:
-  description: A listing of a supported OAuth 2.0 provider.
-  type: object
-  required: [id, type]
-  properties:
-    type:
+components:
+  schemas:
+    ProviderID:
       type: string
-      example: 'provider'
-    id:
-      $ref: "#/ProviderID"
-ProvidersResponse:
-  description: A JSON:API response that returns a list of supported OAuth 2.0 providers.
-  type: object
-  properties:
-    jsonapi:
-      $ref: "../../../../docs/schemas.yml#/JSONAPIHeader"
-    links:
-      $ref: "../../../../docs/schemas.yml#/Links"
-    data:
-      type: array
-      items:
-        $ref: '#/ProviderResource'
-ProviderResponse:
-  description: A JSON:API response that returns a single supported OAuth 2.0 provider.
-  type: object
-  properties:
-    jsonapi:
-      $ref: "../../../../docs/schemas.yml#/JSONAPIHeader"
-    links:
-      $ref: "../../../../docs/schemas.yml#/Links"
-    data:
-      $ref: '#/ProviderResource'
+      enum: [google, github, discord]
+
+    ProviderResource:
+      description: A listing of a supported OAuth 2.0 provider.
+      type: object
+      required: [id, type]
+      properties:
+        type:
+          type: string
+          example: "provider"
+        id:
+          $ref: "#/components/schemas/ProviderID"
+
+    ProvidersResponse:
+      description: A JSON:API response that returns a list of supported OAuth 2.0 providers.
+      type: object
+      properties:
+        jsonapi:
+          $ref: "../../../../docs/common.yml#/components/schemas/JSONAPIHeader"
+        links:
+          $ref: "../../../../docs/common.yml#/components/schemas/Links"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProviderResource"
+
+    ProviderResponse:
+      description: A JSON:API response that returns a single supported OAuth 2.0 provider.
+      type: object
+      properties:
+        jsonapi:
+          $ref: "../../../../docs/common.yml#/components/schemas/JSONAPIHeader"
+        links:
+          $ref: "../../../../docs/common.yml#/components/schemas/Links"
+        data:
+          $ref: '#/components/schemas/ProviderResource'

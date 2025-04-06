@@ -1,0 +1,56 @@
+components:
+  schemas:
+    ItemAttributes:
+      type: object
+      properties:
+        slug:
+          type: string
+          description: A slugified string that uniquely identifies this item.
+          pattern: '^[a-z0-9-]+$'
+          example: item
+        name:
+          type: string
+          description: The name of this item.
+          example: Item
+        description:
+          type: string
+          description: A short description of this item.
+        body:
+          type: string
+          description: Longer text to more fully explain how the item works. This can include Markdown.
+        attribution:
+          type: string
+          description: |
+            When you submit an item, you’re agreeing to share
+            it under a CC-BY-SA 4.0 International License. With this field, you can
+            include any necessary attributions from other CC-BY-SA-licensed works
+            that you have built on. Anyone who builds on this item should include
+            everything in this attribution field _plus_ an attribution to you.
+        created:
+          type: string
+          format: date-time
+          description: When this item was created.
+        updated:
+          type: string
+          format: date-time
+          description: When this item was most recently updated.
+
+    AuthorsRelationship:
+      type: object
+      properties:
+        authors:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                description: |
+                  Each pair of type and ID refers to an object provided in
+                  the top-level `included` property.
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: users
+                  id:
+                    $ref: "../../../docs/common.yml#/components/schemas/UUID"

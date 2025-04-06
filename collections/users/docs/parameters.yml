@@ -1,0 +1,38 @@
+components:
+  parameters:
+    UserID:
+      name: userId
+      in: path
+      description: User ID or username.
+      required: true
+      schema:
+        $ref: "./schemas.yml#/components/schemas/UserID"
+      examples:
+        uuidExample:
+          summary: Example user ID
+          value: dd486183-17f9-52e0-92a9-45ff579bdeea
+        usernameExample:
+          summary: Example username
+          value: johnny
+
+    UserFields:
+      name: fields[users]
+      in: query
+      description: |
+        The user attributes to return. Possible values are `name` and
+        `username`. You can specify both by separating them with a comma,
+        though this results in the same behavior as not providing the
+        parameter at all. If provided, only the fields specified will be
+        returned in the user’s attributes.
+      schema:
+        type: string
+      examples:
+        nameExample:
+          summary: Just the name
+          value: name
+        usernameExample:
+          summary: Just the username
+          value: username
+        bothExample:
+          summary: Name and username
+          value: name,username

@@ -59,3 +59,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  schemas:
+    $ref: "./schemas.yml#/components/schemas"
+  parameters:
+    $ref: "./parameters.yml#/components/parameters"

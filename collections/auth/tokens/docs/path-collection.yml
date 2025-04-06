@@ -38,12 +38,12 @@ post:
       application/json:
         schema:
           oneOf:
-            - $ref: "./schemas.yml#/TokenAccessCreation"
-            - $ref: "./schemas.yml#/TokenRefreshCreation"
+            - $ref: "./schemas.yml#/components/schemas/TokenAccessCreation"
+            - $ref: "./schemas.yml#/components/schemas/TokenRefreshCreation"
   responses:
     200:
       description: Token issued.
       content:
         application/json:
           schema:
-            $ref: "./schemas.yml#/TokenResponse"
+            $ref: "./schemas.yml#/components/schemas/TokenResponse"

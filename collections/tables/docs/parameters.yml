@@ -1,0 +1,37 @@
+components:
+  parameters:
+    TableID:
+      name: tableID
+      in: path
+      description: Table ID or unique slug.
+      required: true
+      schema:
+        $ref: "./schemas.yml#/components/schemas/TableID"
+      examples:
+        uuidExample:
+          summary: Example UUID
+          value: dd486183-17f9-52e0-92a9-45ff579bdeea
+        usernameExample:
+          summary: Example slug
+          value: taking-action
+
+    TableFields:
+      name: fields[tables]
+      in: query
+      description: |
+        This optional parameter is a comma-separated list of the attributes
+        that you would like to receive back for the table requested. Possible
+        values include any combination of `slug`, `name`, `description`,
+        `body`, `attribution`, `methods`, `rows`, `created`, and `updated`.
+      schema:
+        type: string
+      examples:
+        summaryExample:
+          summary: Fields you might use for a summary, card, or search result
+          value: slug,name,description
+        datesExample:
+          summary: Just the date fields
+          value: created,updated
+        rows:
+          summary: Just the rows
+          value: rows

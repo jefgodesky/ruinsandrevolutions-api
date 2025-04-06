@@ -1,0 +1,10 @@
+components:
+  parameters:
+    Role:
+      name: role
+      in: path
+      description: The role in question.
+      required: true
+      schema:
+        type: string
+        enum: [ active, listed, admin ]

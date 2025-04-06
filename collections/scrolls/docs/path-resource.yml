@@ -5,16 +5,16 @@ get:
   description: This endpoint retrieves a scroll.
   operationId: getScroll
   parameters:
-    - $ref: "./schemas.yml#/ScrollID"
-    - $ref: "./schemas.yml#/ScrollFields"
-    - $ref: "../../users/docs/schemas.yml#/UserFields"
+    - $ref: "./parameters.yml#/components/parameters/ScrollID"
+    - $ref: "./parameters.yml#/components/parameters/ScrollFields"
+    - $ref: "../../users/docs/parameters.yml#/components/parameters/UserFields"
   responses:
     200:
       description: The scroll requested.
       content:
         application/json:
           schema:
-            $ref: "./schemas.yml#/ScrollResponse"
+            $ref: "./schemas.yml#/components/schemas/ScrollResponse"
     404:
       description: The requested scroll could not be found.
 patch:
@@ -27,9 +27,9 @@ patch:
     they were.
   operationId: updateScroll
   parameters:
-    - $ref: "./schemas.yml#/ScrollID"
-    - $ref: "./schemas.yml#/ScrollFields"
-    - $ref: "../../users/docs/schemas.yml#/UserFields"
+    - $ref: "./parameters.yml#/components/parameters/ScrollID"
+    - $ref: "./parameters.yml#/components/parameters/ScrollFields"
+    - $ref: "../../users/docs/parameters.yml#/components/parameters/UserFields"
   security:
     - bearerAuth: [ ]
   requestBody:
@@ -37,14 +37,14 @@ patch:
     content:
       application/json:
         schema:
-          $ref: "./schemas.yml#/ScrollPatch"
+          $ref: "./schemas.yml#/components/schemas/ScrollPatch"
   responses:
     200:
       description: The updated scroll.
       content:
         application/json:
           schema:
-            $ref: "./schemas.yml#/ScrollResponse"
+            $ref: "./schemas.yml#/components/schemas/ScrollResponse"
     400:
       description: |
         If you're receiving this error response, the most likely cause
@@ -62,7 +62,7 @@ delete:
   description: This endpoint allows any of a scroll’s authors to delete that scroll.
   operationId: deleteScroll
   parameters:
-    - $ref: "./schemas.yml#/ScrollID"
+    - $ref: "./parameters.yml#/components/parameters/ScrollID"
   security:
     - bearerAuth: [ ]
   responses:

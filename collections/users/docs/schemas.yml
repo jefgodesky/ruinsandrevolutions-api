@@ -1,37 +1,15 @@
-UserAttributes:
-  description: The fields associated with a user.
-  type: object
-  required: [name]
-  properties:
-    name:
-      type: string
-      example: John Doe
-    username:
-      type: string
-      example: johnny
-UserResource:
-  description: The full JSON:API resource describing a user.
-  type: object
-  required: [type, id, attributes]
-  properties:
-    type:
-      type: string
-      example: "users"
-    id:
-      $ref: "../../../docs/schemas.yml#/UUID"
-    attributes:
-      $ref: "#/UserAttributes"
-UserPatch:
-  description: The resource that should be provided to update a user.
-  type: object
-  required: [type, attributes]
-  properties:
-    type:
-      type: string
-      example: "users"
-    attributes:
+components:
+  schemas:
+    UserID:
+      description: User ID or username.
+      oneOf:
+        - $ref: "../../../docs/common.yml#/components/schemas/UUID"
+        - type: string
+
+    UserAttributes:
       description: The fields associated with a user.
       type: object
+      required: [name]
       properties:
         name:
           type: string
@@ -39,78 +17,76 @@ UserPatch:
         username:
           type: string
           example: johnny
-UserResponse:
-  description: A JSON:API response that returns a single user.
-  type: object
-  properties:
-    jsonapi:
-      $ref: "../../../docs/schemas.yml#/JSONAPIHeader"
-    links:
-      $ref: "../../../docs/schemas.yml#/Links"
-    data:
-      $ref: "#/UserResource"
-UsersResponse:
-  description: A JSON:API response that returns several users.
-  type: object
-  properties:
-    jsonapi:
-      $ref: "../../../docs/schemas.yml#/JSONAPIHeader"
-    links:
-      $ref: "../../../docs/schemas.yml#/PaginatedLinks"
-    data:
-      type: array
-      items:
-        $ref: "#/UserResource"
-UserID:
-  name: userId
-  in: path
-  description: User ID or username.
-  required: true
-  schema:
-    oneOf:
-      - $ref: "../../../docs/schemas.yml#/UUID"
-      - type: string
-  examples:
-    uuidExample:
-      summary: Example UUID
-      value: dd486183-17f9-52e0-92a9-45ff579bdeea
-    usernameExample:
-      summary: Example username
-      value: johnny
-UserFields:
-  name: fields[users]
-  in: query
-  description: |
-    The user attributes to return. Possible values are `name` and
-    `username`. You can specify both by separating them with a comma,
-    though this results in the same behavior as not providing the
-    parameter at all. If provided, only the fields specified will be
-    returned in the user’s attributes.
-  schema:
-    type: string
-  examples:
-    nameExample:
-      summary: Just the name
-      value: name
-    usernameExample:
-      summary: Just the username
-      value: username
-    bothExample:
-      summary: Name and username
-      value: name,username
-IncludedUser:
-  type: object
-  properties:
-    links:
+
+    UserResource:
+      description: The full JSON:API resource describing a user.
+      type: object
+      required: [type, id, attributes]
+      properties:
+        type:
+          type: string
+          example: "users"
+        id:
+          $ref: "../../../docs/common.yml#/components/schemas/UUID"
+        attributes:
+          $ref: "#/components/schemas/UserAttributes"
+
+    UserPatch:
+      description: The resource that should be provided to update a user.
+      type: object
+      required: [type, attributes]
+      properties:
+        type:
+          type: string
+          example: "users"
+        attributes:
+          description: The fields associated with a user.
+          type: object
+          properties:
+            name:
+              type: string
+              example: John Doe
+            username:
+              type: string
+              example: johnny
+
+    UserResponse:
+      description: A JSON:API response that returns a single user.
       type: object
       properties:
-        self:
+        jsonapi:
+          $ref: "../../../docs/common.yml#/components/schemas/JSONAPIHeader"
+        links:
+          $ref: "../../../docs/common.yml#/components/schemas/Links"
+        data:
+          $ref: "#/components/schemas/UserResource"
+
+    UsersResponse:
+      description: A JSON:API response that returns several users.
+      type: object
+      properties:
+        jsonapi:
+          $ref: "../../../docs/common.yml#/components/schemas/JSONAPIHeader"
+        links:
+          $ref: "../../../docs/common.yml#/components/schemas/PaginatedLinks"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserResource"
+
+    IncludedUser:
+      type: object
+      properties:
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+              description: The endpoint for this user.
+        type:
           type: string
-          description: The endpoint for this user.
-    type:
-      type: string
-      example: users
-    id:
-      $ref: "../../../docs/schemas.yml#/UUID"
-    attributes:
-      $ref: "#/UserAttributes"
+          example: users
+        id:
+          $ref: "../../../docs/common.yml#/components/schemas/UUID"
+        attributes:
+          $ref: "#/components/schemas/UserAttributes"

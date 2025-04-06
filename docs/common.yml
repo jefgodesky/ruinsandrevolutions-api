@@ -1,0 +1,84 @@
+components:
+  schemas:
+    JSONAPIHeader:
+      description: A header attached to all responses indicating the version of JSON:API that is implemented here.
+      type: object
+      required: [ version ]
+      properties:
+        version:
+          type: string
+          example: "1.1"
+
+    Links:
+      description: The standard links supplied with all responses.
+      type: object
+      required: [ self ]
+      properties:
+        self:
+          type: string
+          example: "https://api.example.com/v1/items/1"
+        describedBy:
+          type: string
+          example: "https://api.example.com/v1/docs"
+
+    PaginatedLinks:
+      description: Paginated links for endpoints that respond with many records.
+      allOf:
+        - $ref: "#/components/schemas/Links"
+        - type: object
+          required: [ first, prev, next, last ]
+          properties:
+            first:
+              type: string
+              example: "https://api.example.com/v1/items?offset=0&limit=10"
+            prev:
+              type: string
+              example: "https://api.example.com/v1/items?offset=10&limit=10"
+            next:
+              type: string
+              example: "https://api.example.com/v1/items?offset=30&limit=10"
+            last:
+              type: string
+              example: "https://api.example.com/v1/items?offset=90&limit=10"
+
+    UUID:
+      type: string
+      pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      minLength: 36
+      maxLength: 36
+
+    RandomizedString:
+      type: object
+      required: [human]
+      properties:
+        human:
+          type: string
+          description: |
+            This is the human-readable version of the string, the one
+            that you might print out on its own.
+          example: 2d6 + Intelligence
+        computable:
+          type: string
+          description: |
+            This is a version of the same string that can be parsed
+            for randomized values or mathematical expressions. Some
+            examples would be:
+
+            - `{{2d6 + Intelligence}}` — A normal ability roll
+            - `{{3d6kh2 + Intelligence}}` — That ability roll with advantage
+            - `{{3d6kl2 + Intelligence}}` — That ability roll with disadvantage
+            - `{{1 + 1}}` — Pure mathematical statement
+            - `{{5 - Intelligence}}` — Mathematical statement with variables
+            - `{{roll: random-encounters}}` — Roll on the random-encounters table
+            - `{{1d6}} skeletons` — Mix formulas with text
+          example: "{{2d6 + Intelligence}}"
+
+    Note:
+      type: object
+      required: [ name, text ]
+      properties:
+        name:
+          type: string
+          description: A name for this note.
+        text:
+          $ref: "#/components/schemas/RandomizedString"

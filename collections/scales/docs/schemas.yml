@@ -1,152 +1,17 @@
-ScaleAttributes:
-  description: The fields associated with a scale.
-  type: object
-  properties:
-    slug:
-      type: string
-      description: A slugified string that uniquely identifies this scale.
-      pattern: '^[a-z0-9-]+$'
-      example: attitude
-    name:
-      type: string
-      description: The name of this scale.
-      example: Attitude
-    description:
-      type: string
-      description: A short description of this scale.
-      example: A scale of attitudes that one character may have towards another.
-    body:
-      type: string
-      description: Longer text to more fully explain how the scale works. This can include Markdown.
-    attribution:
-      type: string
-      description: |
-        When you submit a scale using this endpoint, you’re agreeing to share
-        it under a CC-BY-SA 4.0 International License. With this field, you can
-        include any necessary attributions from other CC-BY-SA-licensed works
-        that you have built on. Anyone who builds on this scale should include
-        everything in this attribution field _plus_ an attribution to you.
-    levels:
-      type: array
-      items:
-        type: string
-      description: The levels of the scale, in order. Each level can be as long or short as it needs to be. You can use Markdown.
-      example:
-        - Hostile
-        - Antagonistic
-        - Indifferent
-        - Friendly
-        - Loyal
-    created:
-      type: string
-      format: date-time
-      description: When this scale was created.
-    updated:
-      type: string
-      format: date-time
-      description: When this scale was most recently updated.
-ScaleResource:
-  description: The full JSON:API resource describing a scale.
-  type: object
-  required: [type, id]
-  properties:
-    type:
-      type: string
-      example: "scales"
-    id:
-      $ref: "../../../docs/schemas.yml#/UUID"
-    attributes:
-      $ref: "#/ScaleAttributes"
-    relationships:
-      type: object
-      properties:
-        authors:
+components:
+  schemas:
+    ScaleID:
+      description: Scale ID or unique slug.
+      oneOf:
+        - $ref: "../../../docs/common.yml#/components/schemas/UUID"
+        - type: string
+
+    ScaleAttributes:
+      allOf:
+        - $ref: "../../items/docs/schemas.yml#/components/schemas/ItemAttributes"
+        - description: The fields associated with a scale.
           type: object
           properties:
-            data:
-              type: array
-              items:
-                description: |
-                  Each pair of type and ID refers to an object provided in
-                  the top-level `included` property.
-                type: object
-                properties:
-                  type:
-                    type: string
-                    example: users
-                  id:
-                    $ref: "../../../docs/schemas.yml#/UUID"
-ScaleResponse:
-  description: A JSON:API response that returns a single scale.
-  type: object
-  properties:
-    jsonapi:
-      $ref: "../../../docs/schemas.yml#/JSONAPIHeader"
-    links:
-      $ref: "../../../docs/schemas.yml#/Links"
-    data:
-      $ref: "#/ScaleResource"
-    included:
-      type: array
-      items:
-        $ref: "../../users/docs/schemas.yml#/IncludedUser"
-ScalesResponse:
-  description: A JSON:API response that returns a paginated list of scales.
-  type: object
-  properties:
-    jsonapi:
-      $ref: "../../../docs/schemas.yml#/JSONAPIHeader"
-    links:
-      $ref: "../../../docs/schemas.yml#/PaginatedLinks"
-    data:
-      type: array
-      items:
-        $ref: "#/ScaleResource"
-    included:
-      type: array
-      items:
-        $ref: "../../users/docs/schemas.yml#/IncludedUser"
-ScaleCreation:
-  description: The object that a client must provide to create a new scale.
-  type: object
-  required: [data]
-  properties:
-    data:
-      type: object
-      required: [type, attributes]
-      properties:
-        type:
-          type: string
-          example: "scales"
-        attributes:
-          description: The fields associated with a scale.
-          required: [name, levels]
-          type: object
-          properties:
-            slug:
-              type: string
-              description: A slugified string that uniquely identifies this scale.
-              pattern: '^[a-z0-9-]+$'
-              example: attitude
-            name:
-              type: string
-              description: The name of this scale.
-              example: Attitude
-            description:
-              type: string
-              description: A short description of this scale.
-              example: A scale of attitudes that one character may have towards another.
-            body:
-              type: string
-              description: Longer text to more fully explain how the scale works. This can include Markdown.
-            attribution:
-              type: string
-              description: |
-                When you submit a scale using this endpoint, you’re agreeing to share
-                it under a CC-BY-SA 4.0 International License. With this field, you can
-                include any necessary attributions from other CC-BY-SA-licensed works
-                that you have built on. Anyone who builds on this scale should include
-                everything in this attribution field _plus_ an attribution to you.
             levels:
               type: array
               items:
@@ -158,134 +23,117 @@ ScaleCreation:
                 - Indifferent
                 - Friendly
                 - Loyal
-        relationships:
-          type: object
-          properties:
-            authors:
-              type: object
-              properties:
-                data:
-                  type: array
-                  items:
-                    description: |
-                      Specify each author by her unique ID string.
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                        example: users
-                      id:
-                        $ref: "../../../docs/schemas.yml#/UUID"
-ScalePatch:
-  description: The object that a client must provide to update a scale.
-  type: object
-  required: [data]
-  properties:
-    data:
+
+    ScaleResource:
+      description: The full JSON:API resource describing a scale.
       type: object
-      required: [type, id, attributes]
+      required: [type, id]
       properties:
         type:
           type: string
           example: "scales"
         id:
-          $ref: "#/ScaleID"
+          $ref: "../../../docs/common.yml#/components/schemas/UUID"
         attributes:
-          description: The fields associated with a scale.
-          type: object
-          properties:
-            slug:
-              type: string
-              description: A slugified string that uniquely identifies this scale.
-              pattern: '^[a-z0-9-]+$'
-              example: attitude
-            name:
-              type: string
-              description: The name of this scale.
-              example: Attitude
-            description:
-              type: string
-              description: A short description of this scale.
-              example: A scale of attitudes that one character may have towards another.
-            body:
-              type: string
-              description: Longer text to more fully explain how the scale works. This can include Markdown.
-            attribution:
-              type: string
-              description: |
-                When you submit a scale using this endpoint, you’re agreeing to share
-                it under a CC-BY-SA 4.0 International License. With this field, you can
-                include any necessary attributions from other CC-BY-SA-licensed works
-                that you have built on. Anyone who builds on this scale should include
-                everything in this attribution field _plus_ an attribution to you.
-            levels:
-              type: array
-              items:
-                type: string
-              description: The levels of the scale, in order. Each level can be as long or short as it needs to be. You can use Markdown.
-              example:
-                - Hostile
-                - Antagonistic
-                - Indifferent
-                - Friendly
-                - Loyal
+          $ref: "./schemas.yml#/components/schemas/ScaleAttributes"
         relationships:
+          $ref: "../../items/docs/schemas.yml#/components/schemas/AuthorsRelationship"
+
+    ScaleResponse:
+      description: A JSON:API response that returns a single scale.
+      type: object
+      properties:
+        jsonapi:
+          $ref: "../../../docs/common.yml#/components/schemas/JSONAPIHeader"
+        links:
+          $ref: "../../../docs/common.yml#/components/schemas/Links"
+        data:
+          $ref: "#/components/schemas/ScaleResource"
+        included:
+          type: array
+          items:
+            $ref: "../../users/docs/schemas.yml#/components/schemas/IncludedUser"
+
+    ScalesResponse:
+      description: A JSON:API response that returns a paginated list of scales.
+      type: object
+      properties:
+        jsonapi:
+          $ref: "../../../docs/common.yml#/components/schemas/JSONAPIHeader"
+        links:
+          $ref: "../../../docs/common.yml#/components/schemas/PaginatedLinks"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScaleResource"
+        included:
+          type: array
+          items:
+            $ref: "../../users/docs/schemas.yml#/components/schemas/IncludedUser"
+
+    ScaleCreation:
+      description: The object that a client must provide to create a new scale.
+      type: object
+      required: [data]
+      properties:
+        data:
           type: object
-          description: |
-            If omitted, you can update the scale without changing the
-            authors. If included, it performs a full replacement of
-            the item's authors. Any authors not included in the new
-            list will be removed, and any new authors in the list
-            will be added.
+          required: [type, attributes]
           properties:
-            authors:
-              type: object
-              properties:
-                data:
-                  type: array
-                  items:
-                    description: |
-                      Specify each author by her unique ID string.
-                    type: object
-                    properties:
-                      type:
+            type:
+              type: string
+              example: "scales"
+            attributes:
+              allOf:
+                - $ref: "../../items/docs/schemas.yml#/components/schemas/ItemAttributes"
+                - description: The fields associated with a scale.
+                  required: [name, levels]
+                  type: object
+                  properties:
+                    levels:
+                      type: array
+                      items:
                         type: string
-                        example: users
-                      id:
-                        $ref: "../../../docs/schemas.yml#/UUID"
-ScaleID:
-  name: scaleId
-  in: path
-  description: Scale ID or unique slug.
-  required: true
-  schema:
-    oneOf:
-      - $ref: "../../../docs/schemas.yml#/UUID"
-      - type: string
-  examples:
-    uuidExample:
-      summary: Example UUID
-      value: dd486183-17f9-52e0-92a9-45ff579bdeea
-    usernameExample:
-      summary: Example slug
-      value: attitude
-ScaleFields:
-  name: fields[scales]
-  in: query
-  description: |
-    This optional parameter is a comma-separated list of the attributes
-    that you would like to receive back for the scale requested. Possible
-    values include any combination of `slug`, `name`, `description`,
-    `body`, `attribution`, `levels`, `created`, and `updated`.
-  schema:
-    type: string
-  examples:
-    summaryExample:
-      summary: Fields you might use for a summary, card, or search result
-      value: slug,name,description
-    datesExample:
-      summary: Just the date fields
-      value: created,updated
-    levelsExample:
-      summary: Just the levels
-      value: levels
+                      description: The levels of the scale, in order. Each level can be as long or short as it needs to be. You can use Markdown.
+                      example:
+                        - Hostile
+                        - Antagonistic
+                        - Indifferent
+                        - Friendly
+                        - Loyal
+            relationships:
+              $ref: "../../items/docs/schemas.yml#/components/schemas/AuthorsRelationship"
+
+    ScalePatch:
+      description: The object that a client must provide to update a scale.
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [type, id, attributes]
+          properties:
+            type:
+              type: string
+              example: "scales"
+            id:
+              $ref: "../../../docs/common.yml#/components/schemas/UUID"
+            attributes:
+              allOf:
+                - $ref: "../../items/docs/schemas.yml#/components/schemas/ItemAttributes"
+                - description: The fields associated with a scale.
+                  type: object
+                  properties:
+                    levels:
+                      type: array
+                      items:
+                        type: string
+                      description: The levels of the scale, in order. Each level can be as long or short as it needs to be. You can use Markdown.
+                      example:
+                        - Hostile
+                        - Antagonistic
+                        - Indifferent
+                        - Friendly
+                        - Loyal
+            relationships:
+              $ref: "../../items/docs/schemas.yml#/components/schemas/AuthorsRelationship"

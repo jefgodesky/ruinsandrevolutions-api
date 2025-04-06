@@ -1,0 +1,9 @@
+components:
+  parameters:
+    ProviderID:
+      name: providerId
+      in: path
+      description: Provider ID.
+      required: true
+      schema:
+        $ref: "./schemas.yml#/components/schemas/ProviderID"

@@ -1,418 +1,136 @@
-JSONAPIHeader:
-  description: A header attached to all responses indicating the version of JSON:API that is implemented here.
-  type: object
-  required: [version]
-  properties:
-    version:
-      type: string
-      example: '1.1'
-Links:
-  description: The standard links supplied with all responses.
-  type: object
-  required: [self]
-  properties:
-    self:
-      type: string
-      example: "https://api.example.com/v1/items/1"
-    describedBy:
-      type: string
-      example: "https://api.example.com/v1/docs"
-PaginatedLinks:
-  description: Paginated links for endpoints that respond with many records.
-  type: object
-  required: [first, prev, next, last]
-  properties:
-    first:
-      type: string
-      example: "https://api.example.com/v1/items?offset=0&limit=10"
-    prev:
-      type: string
-      example: "https://api.example.com/v1/items?offset=10&limit=10"
-    next:
-      type: string
-      example: "https://api.example.com/v1/items?offset=30&limit=10"
-    last:
-      type: string
-      example: "https://api.example.com/v1/items?offset=90&limit=10"
-ItemSort:
-  name: sort
-  in: query
-  description: |
-    This optional parameter allows you to specify how to sort the
-    items. The base values can be `name`, `created`, or `updated`.
-    By themselves, these indicate that the items should be sorted by
-    that field in ascending order (from the smallest values to the
-    largest; for strings like `name`, that means alphabetical order;
-    for dates like `created` or `updated`, that means chronological
-    order, from the earliest values to the most recent). You can
-    prefix any of these with a `-` (e.g., `-name`, `-created`, or
-    `-updated`) to indicate descending order (from the largest values
-    to the smallest; for strings like `name`, that means reverse
-    alphabetical order; for dates like `created` or `updated` that
-    means reverse chronological order, from the most recent values to
-    the earliest).
-    
-    You can combine more than one sorting criteria as a
-    comma-separated list. These are assessed in order, so if you
-    provide `name,-updated`, you will receive items in alphabetical
-    order by name, with any items that have the same name sorted from
-    those that were most recently updated to those whose latest
-    update is furthest in the past.
-  schema:
-    type: string
-  examples:
-    alphabetical:
-      summary: List all items in alphabetical order by name.
-      value: name
-    updated:
-      summary: List all items from the most recently updated back.
-      value: -updated
-ItemFilterName:
-  name: filter[name]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have the name provided. Note that this is
-    case sensitive.
-  schema:
-    type: string
-ItemFilterNameStartsWith:
-  name: filter[name][startsWith]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have a name that begins with the string
-    provided. This comparison is case sensitive.
-  schema:
-    type: string
-ItemFilterNameEndsWith:
-  name: filter[name][endsWith]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have a name that ends with the string
-    provided. This comparison is case sensitive.
-  schema:
-    type: string
-ItemFilterNameContains:
-  name: filter[name][contains]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have a name that contains the string
-    provided. This comparison is **not** case sensitive.
-  schema:
-    type: string
-ItemFilterDescription:
-  name: filter[description]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have the description provided. Note that this
-    is case sensitive.
-  schema:
-    type: string
-ItemFilterDescriptionStartsWith:
-  name: filter[description][startsWith]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have a description that begins with the string
-    provided. This comparison is case sensitive.
-  schema:
-    type: string
-ItemFilterDescriptionEndsWith:
-  name: filter[description][endsWith]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have a description that ends with the string
-    provided. This comparison is case sensitive.
-  schema:
-    type: string
-ItemFilterDescriptionContains:
-  name: filter[description][contains]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have a description that contains the string
-    provided. This comparison is **not** case sensitive.
-  schema:
-    type: string
-ItemFilterNotes:
-  name: filter[notes]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have the notes provided. Note that this
-    is case sensitive.
-  schema:
-    type: string
-ItemFilterNotesStartsWith:
-  name: filter[notes][startsWith]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have a notes field that begins with the string
-    provided. This comparison is case sensitive.
-  schema:
-    type: string
-ItemFilterNotesEndsWith:
-  name: filter[notes][endsWith]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have a notes field that ends with the string
-    provided. This comparison is case sensitive.
-  schema:
-    type: string
-ItemFilterNotesContains:
-  name: filter[notes][contains]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have a notes field that contains the string
-    provided. This comparison is **not** case sensitive.
-  schema:
-    type: string
-ItemFilterAuthorName:
-  name: filter[author.name]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have an author with the name provided. Note
-    that this comparison is case sensitive.
-  schema:
-    type: string
-ItemFilterAuthorNameStartsWith:
-  name: filter[author.name][startsWith]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have an author whose name begins with the
-    string provided. This comparison is case sensitive.
-  schema:
-    type: string
-ItemFilterAuthorNameEndsWith:
-  name: filter[author.name][endsWith]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have an author whose name ends with the string
-    provided. This comparison is case sensitive.
-  schema:
-    type: string
-ItemFilterAuthorNameContains:
-  name: filter[author.name][contains]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have an author whose name contains the string
-    provided. This comparison is **not** case sensitive.
-  schema:
-    type: string
-ItemFilterAuthorUsername:
-  name: filter[author.username]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have an author with the username provided.
-    Note that this comparison is case sensitive.
-  schema:
-    type: string
-ItemFilterAuthorUsernameStartsWith:
-  name: filter[author.username][startsWith]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have an author whose username begins with the
-    string provided. This comparison is case sensitive.
-  schema:
-    type: string
-ItemFilterAuthorUsernameEndsWith:
-  name: filter[author.username][endsWith]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have an author whose username ends with the
-    string provided. This comparison is case sensitive.
-  schema:
-    type: string
-ItemFilterAuthorUsernameContains:
-  name: filter[author.username][contains]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those that have an author whose username contains the
-    string provided. This comparison is **not** case sensitive.
-  schema:
-    type: string
-ItemFilterCreated:
-  name: filter[created]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those created at a given time or between two times. All
-    times provided to this parameter should conform to the ISO 8601
-    standard.
-    
-    If given a fully-qualified time
-    (e.g., `2025-01-01T12:00:00.000Z`), this will limit the results
-    to only those items created at that moment.
-    
-    If given a date (e.g., `2025-01-01`), this is interpreted as a
-    range from `2025-01-01T00:00:00.000Z` to
-    `2025-01-01T23:59:59.999Z`, and will return any items created
-    between those two timestamps (inclusively).
-    
-    You can also provide a range between two times by separating
-    them with an ellipsis (`...`), e.g.,
-    `2025-01-01T00:00:00.000Z...2025-01-02T12:00:00.000Z` would
-    include everything from midnight on 1 January 2025 until
-    noon on 2 January 2025. If you supply dates as values
-    (e.g., `2025-01-01...2025-01-02`), then this is interpreted as
-    a range from the first moment of the first day until the last
-    moment of the last day (e.g.,
-    `2025-01-01T00:00:00.000Z...2025-01-02T23:59:59.999Z`).
-    
-    You can also specify a relative span of time by using the
-    duration format specified by ISO 8601. This creates a range that
-    uses the current moment as its end and sets the start by applying
-    the duration specified backwards. For example, `P3D` would limit
-    results to those items created in the past three days.
-  examples:
-    moment:
-      summary: Items created at a specific moment in time.
-      value: 2025-01-01T00:00:00.000Z
-    day:
-      summary: Items created at any time on a given day.
-      value: "2025-01-01"
-    january:
-      summary: Items created in January 2025.
-      value: 2025-01-01...2025-01-31
-    relative:
-      summary: Items created in the past 10 days.
-      value: P10D
-ItemFilterUpdated:
-  name: filter[updated]
-  in: query
-  description: |
-    This optional parameter allows you to filter the items returned
-    to only those most recently updated at a given time or between
-    two times. All times provided to this parameter should conform to
-    the ISO 8601 standard.
-    
-    If given a fully-qualified time
-    (e.g., `2025-01-01T12:00:00.000Z`), this will limit the results
-    to only those items most recently updated at that moment.
-    
-    If given a date (e.g., `2025-01-01`), this is interpreted as a
-    range from `2025-01-01T00:00:00.000Z` to
-    `2025-01-01T23:59:59.999Z`, and will return any items that were
-    most recently updated between those two timestamps (inclusively).
-    
-    You can also provide a range between two times by separating
-    them with an ellipsis (`...`), e.g.,
-    `2025-01-01T00:00:00.000Z...2025-01-02T12:00:00.000Z` would
-    include everything from midnight on 1 January 2025 until
-    noon on 2 January 2025. If you supply dates as values
-    (e.g., `2025-01-01...2025-01-02`), then this is interpreted as
-    a range from the first moment of the first day until the last
-    moment of the last day (e.g.,
-    `2025-01-01T00:00:00.000Z...2025-01-02T23:59:59.999Z`).
-    
-    You can also specify a relative span of time by using the
-    duration format specified by ISO 8601. This creates a range that
-    uses the current moment as its end and sets the start by applying
-    the duration specified backwards. For example, `P3D` would limit
-    results to those items updated in the past three days.
-  examples:
-    moment:
-      summary: Items most recently updated at a specific moment in time.
-      value: 2025-01-01T00:00:00.000Z
-    day:
-      summary: Items most recently updated at any time on a given day.
-      value: "2025-01-01"
-    january:
-      summary: Items most recently updated in January 2025.
-      value: 2025-01-01...2025-01-31
-    relative:
-      summary: Items updated in the past 10 days.
-      value: P10D
-Limit:
-  name: limit
-  in: query
-  description: |
-    This optional parameter is used in conjunction with `offset` to
-    paginate results. This sets how many items should be returned in
-    a single request. If not provided, the default value of 10 is
-    used. 100 is the maximum value for this number that will be
-    respected; any value given greater than 100 will be reduced to
-    100.
-  schema:
-    type: number
-Offset:
-  name: offset
-  in: query
-  description: |
-    This optional parameter is used in conjunction with `limit` to
-    paginate results. This sets where in the complete list of items
-    that match your criteria the current page should begin. If not
-    provided, the default value of 0 is used (the first page of
-    results). To advance to the next page, make a new request by
-    incrementing `offset` by the value of `limit` (the number of
-    results included in each page).
-  schema:
-    type: number
-UUID:
-  type: string
-  pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
-  minLength: 36
-  maxLength: 36
-RandomizedString:
-  type: object
-  required: [human]
-  properties:
-    human:
-      type: string
-      description: |
-        This is the human-readable version of the string, the one
-        that you might print out on its own.
-      example: 2d6 + Intelligence
-    computable:
-      type: string
-      description: |
-        This is a version of the same string that can be parsed
-        for randomized values or mathematical expressions.
-      example: "{{2d6 + Intelligence}}"
-      examples:
-        intelligence:
-          summary: A normal ability roll
-          value: "{{2d6 + Intelligence}}"
-        intelligenceAdv:
-          summary: An ability roll made with advantage
-          value: "{{3d6kh2 + Intelligence}}"
-        intelligenceDis:
-          summary: An ability roll made with disadvantage
-          value: "{{3d6kl2 + Intelligence}}"
-        math:
-          summary: A mathematical statement
-          value: "{{1 + 1}}"
-        statMath:
-          summary: Math with abilities as variables
-          value: "{{5 - Intelligence}}"
-        tableRef:
-          summary: Insert result from a random table (slug)
-          value: "{{roll: random-encounters}}"
-        mixed:
-          summary: Mix evaluations with static text
-          value: "{{1d6}} skeletons"
-Note:
-  type: object
-  required: [name, text]
-  properties:
-    name:
-      type: string
-      description: A name for this note.
-    text:
-      $ref: "./schemas.yml#/RandomizedString"
+components:
+  schemas:
+    JSONAPIHeader:
+      $ref: "./common.yml#/components/schemas/JSONAPIHeader"
+
+    Links:
+      $ref: "./common.yml#/components/schemas/Links"
+
+    PaginatedLinks:
+      $ref: "./common.yml#/components/schemas/PaginatedLinks"
+
+    UUID:
+      $ref: "./common.yml#/components/schemas/UUID"
+
+    RandomizedString:
+      $ref: "./common.yml#/components/schemas/RandomizedString"
+
+    Note:
+      $ref: "./common.yml#/components/schemas/Note"
+
+    ProviderID:
+      $ref: "../collections/auth/providers/docs/schemas.yml#/components/schemas/ProviderID"
+
+    ProviderResource:
+      $ref: "../collections/auth/providers/docs/schemas.yml#/components/schemas/ProviderResource"
+
+    ProvidersResponse:
+      $ref: "../collections/auth/providers/docs/schemas.yml#/components/schemas/ProvidersResponse"
+
+    ProviderResponse:
+      $ref: "../collections/auth/providers/docs/schemas.yml#/components/schemas/ProviderResponse"
+
+    TokenAccessCreation:
+      $ref: "../collections/auth/tokens/docs/schemas.yml#/components/schemas/TokenAccessCreation"
+
+    TokenRefreshCreation:
+      $ref: "../collections/auth/tokens/docs/schemas.yml#/components/schemas/TokenRefreshCreation"
+
+    TokenResponse:
+      $ref: "../collections/auth/tokens/docs/schemas.yml#/components/schemas/TokenResponse"
+
+    ItemAttributes:
+      $ref: "../collections/items/docs/schemas.yml#/components/schemas/ItemAttributes"
+
+    AuthorsRelationship:
+      $ref: "../collections/items/docs/schemas.yml#/components/schemas/AuthorsRelationship"
+
+    ScaleID:
+      $ref: "../collections/scales/docs/schemas.yml#/components/schemas/ScaleID"
+
+    ScaleAttributes:
+      $ref: "../collections/scales/docs/schemas.yml#/components/schemas/ScaleAttributes"
+
+    ScaleResource:
+      $ref: "../collections/scales/docs/schemas.yml#/components/schemas/ScaleResource"
+
+    ScaleResponse:
+      $ref: "../collections/scales/docs/schemas.yml#/components/schemas/ScaleResponse"
+
+    ScalesResponse:
+      $ref: "../collections/scales/docs/schemas.yml#/components/schemas/ScalesResponse"
+
+    ScaleCreation:
+      $ref: "../collections/scales/docs/schemas.yml#/components/schemas/ScaleCreation"
+
+    ScalePatch:
+      $ref: "../collections/scales/docs/schemas.yml#/components/schemas/ScalePatch"
+
+    ScrollID:
+      $ref: "../collections/scrolls/docs/schemas.yml#/components/schemas/ScrollID"
+
+    ScrollAttributes:
+      $ref: "../collections/scrolls/docs/schemas.yml#/components/schemas/ScrollAttributes"
+
+    ScrollResource:
+      $ref: "../collections/scrolls/docs/schemas.yml#/components/schemas/ScrollResource"
+
+    ScrollResponse:
+      $ref: "../collections/scrolls/docs/schemas.yml#/components/schemas/ScrollResponse"
+
+    ScrollsResponse:
+      $ref: "../collections/scrolls/docs/schemas.yml#/components/schemas/ScrollsResponse"
+
+    ScrollCreation:
+      $ref: "../collections/scrolls/docs/schemas.yml#/components/schemas/ScrollCreation"
+
+    ScrollPatch:
+      $ref: "../collections/scrolls/docs/schemas.yml#/components/schemas/ScrollPatch"
+
+    TableID:
+      $ref: "../collections/tables/docs/schemas.yml#/components/schemas/TableID"
+
+    TableAttributes:
+      $ref: "../collections/tables/docs/schemas.yml#/components/schemas/TableAttributes"
+
+    TableResource:
+      $ref: "../collections/tables/docs/schemas.yml#/components/schemas/TableResource"
+
+    TableResponse:
+      $ref: "../collections/tables/docs/schemas.yml#/components/schemas/TableResponse"
+
+    TablesResponse:
+      $ref: "../collections/tables/docs/schemas.yml#/components/schemas/TablesResponse"
+
+    TableCreation:
+      $ref: "../collections/tables/docs/schemas.yml#/components/schemas/TableCreation"
+
+    TablePatch:
+      $ref: "../collections/tables/docs/schemas.yml#/components/schemas/TablePatch"
+
+    TableRollMethod:
+      $ref: "../collections/tables/docs/schemas.yml#/components/schemas/TableRollMethod"
+
+    TableRow:
+      $ref: "../collections/tables/docs/schemas.yml#/components/schemas/TableRow"
+
+    UserID:
+      $ref: "../collections/users/docs/schemas.yml#/components/schemas/UserID"
+
+    UserAttributes:
+      $ref: "../collections/users/docs/schemas.yml#/components/schemas/UserAttributes"
+
+    UserResource:
+      $ref: "../collections/users/docs/schemas.yml#/components/schemas/UserResource"
+
+    UserPatch:
+      $ref: "../collections/users/docs/schemas.yml#/components/schemas/UserPatch"
+
+    UserResponse:
+      $ref: "../collections/users/docs/schemas.yml#/components/schemas/UserResponse"
+
+    UsersResponse:
+      $ref: "../collections/users/docs/schemas.yml#/components/schemas/UsersResponse"
+
+    IncludedUser:
+      $ref: "../collections/users/docs/schemas.yml#/components/schemas/IncludedUser"

@@ -5,7 +5,7 @@ post:
   description: This endpoint allows authenticated users to create new random tables.
   operationId: createTable
   parameters:
-    - $ref: "./schemas.yml#/TableFields"
+    - $ref: "./parameters.yml#/components/parameters/TableFields"
   security:
     - bearerAuth: []
   requestBody:
@@ -13,14 +13,14 @@ post:
     content:
       application/json:
         schema:
-          $ref: "./schemas.yml#/TableCreation"
+          $ref: "./schemas.yml#/components/schemas/TableCreation"
   responses:
     200:
       description: New table created.
       content:
         application/json:
           schema:
-            $ref: "./schemas.yml#/TableResponse"
+            $ref: "./schemas.yml#/components/schemas/TableResponse"
     400:
       description: |
         If you're receiving this error response, the most likely cause
@@ -34,36 +34,36 @@ get:
   description: This endpoint allows users to browse tables.
   operationId: listTables
   parameters:
-    - $ref: "../../../docs/schemas.yml#/ItemSort"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterName"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterNameStartsWith"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterNameEndsWith"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterNameContains"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterDescription"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterDescriptionStartsWith"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterDescriptionEndsWith"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterDescriptionContains"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterNotes"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterNotesStartsWith"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterNotesEndsWith"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterNotesContains"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorName"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorNameStartsWith"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorNameEndsWith"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorNameContains"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorUsername"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorUsernameStartsWith"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorUsernameEndsWith"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterAuthorUsernameContains"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterCreated"
-    - $ref: "../../../docs/schemas.yml#/ItemFilterUpdated"
-    - $ref: "../../../docs/schemas.yml#/Limit"
-    - $ref: "../../../docs/schemas.yml#/Offset"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemSort"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterName"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterNameStartsWith"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterNameEndsWith"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterNameContains"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterDescription"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterDescriptionStartsWith"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterDescriptionEndsWith"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterDescriptionContains"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterNotes"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterNotesStartsWith"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterNotesEndsWith"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterNotesContains"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterAuthorName"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterAuthorNameStartsWith"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterAuthorNameEndsWith"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterAuthorNameContains"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterAuthorUsername"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterAuthorUsernameStartsWith"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterAuthorUsernameEndsWith"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterAuthorUsernameContains"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterCreated"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/ItemFilterUpdated"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/Limit"
+    - $ref: "../../../docs/parameters.yml#/components/parameters/Offset"
   responses:
     200:
       description: A list of tables is returned.
       content:
         application/json:
           schema:
-            $ref: "./schemas.yml#/TablesResponse"
+            $ref: "./schemas.yml#/components/schemas/TablesResponse"
 

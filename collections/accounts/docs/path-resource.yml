@@ -10,19 +10,14 @@ get:
   security:
     - bearerAuth: []
   parameters:
-    - name: provider
-      in: path
-      description: The provider for the account requested.
-      required: true
-      schema:
-        $ref: "../../auth/providers/docs/schemas.yml#/ProviderID"
+    - $ref: "../../auth/providers/docs/parameters.yml#/components/parameters/ProviderID"
   responses:
     200:
       description: Account returned.
       content:
         application/json:
           schema:
-            $ref: "../../auth/providers/docs/schemas.yml#/ProviderResponse"
+            $ref: "../../auth/providers/docs/schemas.yml#/components/schemas/ProviderResponse"
 delete:
   tags:
     - Accounts
@@ -35,12 +30,7 @@ delete:
   security:
     - bearerAuth: []
   parameters:
-    - name: provider
-      in: path
-      description: The provider for the account requested.
-      required: true
-      schema:
-        $ref: "../../auth/providers/docs/schemas.yml#/ProviderID"
+    - $ref: "../../auth/providers/docs/parameters.yml#/components/parameters/ProviderID"
   responses:
     204:
       description: Account deleted.

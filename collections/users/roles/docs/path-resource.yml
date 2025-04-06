@@ -11,7 +11,7 @@ post:
   security:
     - bearerAuth: [ ]
   parameters:
-    - $ref: "./schemas.yml#/Role"
+    - $ref: "./parameters.yml#/components/parameters/Role"
   responses:
     204:
       description: Role granted to user.
@@ -28,7 +28,7 @@ delete:
   security:
     - bearerAuth: [ ]
   parameters:
-    - $ref: "./schemas.yml#/Role"
+    - $ref: "./parameters.yml#/components/parameters/Role"
   responses:
     204:
       description: Role revoked from user.

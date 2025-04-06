@@ -6,6 +6,7 @@
     "dev:stop": "./env/dev.sh down",
     "dev:start": "deno task bundle:docs && deno task listen:dev",
     "bundle:docs": "deno run --allow-read --allow-write --allow-env npm:swagger-cli bundle -o docs/bundle.yml -t yaml docs/index.yml",
+    "lint:docs": "deno run --allow-read --allow-env npm:swagger-cli validate docs/index.yml",
     "start": "deno task bundle:docs && deno task listen",
     "test": "./env/test.sh"
   },

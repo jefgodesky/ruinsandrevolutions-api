@@ -28,14 +28,14 @@ post:
     content:
       application/json:
         schema:
-          $ref: "../../auth/tokens/docs/schemas.yml#/TokenAccessCreation"
+          $ref: "../../auth/tokens/docs/schemas.yml#/components/schemas/TokenAccessCreation"
   responses:
     200:
       description: New account added.
       content:
         application/json:
           schema:
-            $ref: "../../auth/providers/docs/schemas.yml#/ProviderResponse"
+            $ref: "../../auth/providers/docs/schemas.yml#/components/schemas/ProviderResponse"
 get:
   tags:
     - Accounts
@@ -53,4 +53,4 @@ get:
       content:
         application/json:
           schema:
-            $ref: "../../auth/providers/docs/schemas.yml#/ProvidersResponse"
+            $ref: "../../auth/providers/docs/schemas.yml#/components/schemas/ProvidersResponse"

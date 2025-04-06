@@ -1,279 +1,124 @@
-ScrollAttributes:
-  description: The fields associated with a scroll.
-  type: object
-  properties:
-    slug:
-      type: string
-      description: A slugified string that uniquely identifies this scroll.
-      pattern: '^[a-z0-9-]+$'
-      example: alarm
-    name:
-      type: string
-      description: The name of this scroll.
-      example: Alarm
-    description:
-      type: string
-      description: A short description of this scroll.
-      example: When will the guards become aware that there is an intruder in the manor?
-    body:
-      type: string
-      description: Longer text to more fully explain how the scroll works. This can include Markdown.
-    attribution:
-      type: string
-      description: |
-        When you submit a scroll using this endpoint, you’re agreeing to share
-        it under a CC-BY-SA 4.0 International License. With this field, you can
-        include any necessary attributions from other CC-BY-SA-licensed works
-        that you have built on. Anyone who builds on this scroll should include
-        everything in this attribution field _plus_ an attribution to you.
-    start:
-      $ref: "../../../docs/schemas.yml#/RandomizedString"
-    notes:
-      type: array
-      items:
-        $ref: "../../../docs/schemas.yml#/Note"
-    created:
-      type: string
-      format: date-time
-      description: When this scroll was created.
-    updated:
-      type: string
-      format: date-time
-      description: When this scroll was most recently updated.
-ScrollResource:
-  description: The full JSON:API resource describing a scroll.
-  type: object
-  required: [type, id]
-  properties:
-    type:
-      type: string
-      example: "scrolls"
-    id:
-      $ref: "../../../docs/schemas.yml#/UUID"
-    attributes:
-      $ref: "#/ScrollAttributes"
-    relationships:
-      type: object
-      properties:
-        authors:
+components:
+  schemas:
+    ScrollID:
+      description: Scroll ID or unique slug.
+      oneOf:
+        - $ref: "../../../docs/common.yml#/components/schemas/UUID"
+        - type: string
+
+    ScrollAttributes:
+      allOf:
+        - $ref: "../../items/docs/schemas.yml#/components/schemas/ItemAttributes"
+        - description: The fields associated with a scroll.
           type: object
           properties:
-            data:
-              type: array
-              items:
-                description: |
-                  Each pair of type and ID refers to an object provided in
-                  the top-level `included` property.
-                type: object
-                properties:
-                  type:
-                    type: string
-                    example: users
-                  id:
-                    $ref: "../../../docs/schemas.yml#/UUID"
-ScrollResponse:
-  description: A JSON:API response that returns a single scroll.
-  type: object
-  properties:
-    jsonapi:
-      $ref: "../../../docs/schemas.yml#/JSONAPIHeader"
-    links:
-      $ref: "../../../docs/schemas.yml#/Links"
-    data:
-      $ref: "#/ScrollResource"
-    included:
-      type: array
-      items:
-        $ref: "../../users/docs/schemas.yml#/IncludedUser"
-ScrollsResponse:
-  description: A JSON:API response that returns a paginated list of scrolls.
-  type: object
-  properties:
-    jsonapi:
-      $ref: "../../../docs/schemas.yml#/JSONAPIHeader"
-    links:
-      $ref: "../../../docs/schemas.yml#/PaginatedLinks"
-    data:
-      type: array
-      items:
-        $ref: "#/ScrollResource"
-    included:
-      type: array
-      items:
-        $ref: "../../users/docs/schemas.yml#/IncludedUser"
-ScrollCreation:
-  description: The object that a client must provide to create a new scroll.
-  type: object
-  required: [data]
-  properties:
-    data:
-      type: object
-      required: [type, attributes]
-      properties:
-        type:
-          type: string
-          example: "scrolls"
-        attributes:
-          description: The fields associated with a scroll.
-          required: [name, start]
-          type: object
-          properties:
-            slug:
-              type: string
-              description: A slugified string that uniquely identifies this scroll.
-              pattern: '^[a-z0-9-]+$'
-              example: alarm
-            name:
-              type: string
-              description: The name of this scroll.
-              example: Alarm
-            description:
-              type: string
-              description: A short description of this scroll.
-              example: When will the guards become aware that there is an intruder in the manor?
-            body:
-              type: string
-              description: Longer text to more fully explain how the scroll works. This can include Markdown.
-            attribution:
-              type: string
-              description: |
-                When you submit a scroll using this endpoint, you’re agreeing to share
-                it under a CC-BY-SA 4.0 International License. With this field, you can
-                include any necessary attributions from other CC-BY-SA-licensed works
-                that you have built on. Anyone who builds on this scroll should include
-                everything in this attribution field _plus_ an attribution to you.
             start:
-              $ref: "../../../docs/schemas.yml#/RandomizedString"
+              $ref: "../../../docs/common.yml#/components/schemas/RandomizedString"
             notes:
               type: array
               items:
-                $ref: "../../../docs/schemas.yml#/Note"
-        relationships:
-          type: object
-          properties:
-            authors:
-              type: object
-              properties:
-                data:
-                  type: array
-                  items:
-                    description: |
-                      Specify each author by her unique ID string.
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                        example: users
-                      id:
-                        $ref: "../../../docs/schemas.yml#/UUID"
-ScrollPatch:
-  description: The object that a client must provide to update a scroll.
-  type: object
-  required: [data]
-  properties:
-    data:
+                $ref: "../../../docs/common.yml#/components/schemas/Note"
+
+    ScrollResource:
+      description: The full JSON:API resource describing a scroll.
       type: object
-      required: [type, id, attributes]
+      required: [type, id]
       properties:
         type:
           type: string
           example: "scrolls"
         id:
-          $ref: "#/ScrollID"
+          $ref: "../../../docs/common.yml#/components/schemas/UUID"
         attributes:
-          description: The fields associated with a scroll.
-          type: object
-          properties:
-            slug:
-              type: string
-              description: A slugified string that uniquely identifies this scroll.
-              pattern: '^[a-z0-9-]+$'
-              example: alarm
-            name:
-              type: string
-              description: The name of this scroll.
-              example: Alarm
-            description:
-              type: string
-              description: A short description of this scroll.
-              example: When will the guards become aware that there is an intruder in the manor?
-            body:
-              type: string
-              description: Longer text to more fully explain how the scroll works. This can include Markdown.
-            attribution:
-              type: string
-              description: |
-                When you submit a scroll using this endpoint, you’re agreeing to share
-                it under a CC-BY-SA 4.0 International License. With this field, you can
-                include any necessary attributions from other CC-BY-SA-licensed works
-                that you have built on. Anyone who builds on this scroll should include
-                everything in this attribution field _plus_ an attribution to you.
-            start:
-              $ref: "../../../docs/schemas.yml#/RandomizedString"
-            notes:
-              type: array
-              items:
-                $ref: "../../../docs/schemas.yml#/Note"
+          $ref: "#/components/schemas/ScrollAttributes"
         relationships:
+          $ref: "../../items/docs/schemas.yml#/components/schemas/AuthorsRelationship"
+
+    ScrollResponse:
+      description: A JSON:API response that returns a single scroll.
+      type: object
+      properties:
+        jsonapi:
+          $ref: "../../../docs/common.yml#/components/schemas/JSONAPIHeader"
+        links:
+          $ref: "../../../docs/common.yml#/components/schemas/Links"
+        data:
+          $ref: "#/components/schemas/ScrollResource"
+        included:
+          type: array
+          items:
+            $ref: "../../users/docs/schemas.yml#/components/schemas/IncludedUser"
+
+    ScrollsResponse:
+      description: A JSON:API response that returns a paginated list of scrolls.
+      type: object
+      properties:
+        jsonapi:
+          $ref: "../../../docs/common.yml#/components/schemas/JSONAPIHeader"
+        links:
+          $ref: "../../../docs/common.yml#/components/schemas/PaginatedLinks"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScrollResource"
+        included:
+          type: array
+          items:
+            $ref: "../../users/docs/schemas.yml#/components/schemas/IncludedUser"
+
+    ScrollCreation:
+      description: The object that a client must provide to create a new scroll.
+      type: object
+      required: [data]
+      properties:
+        data:
           type: object
-          description: |
-            If omitted, you can update the scroll without changing the
-            authors. If included, it performs a full replacement of
-            the item's authors. Any authors not included in the new
-            list will be removed, and any new authors in the list
-            will be added.
+          required: [type, attributes]
           properties:
-            authors:
-              type: object
-              properties:
-                data:
-                  type: array
-                  items:
-                    description: |
-                      Specify each author by her unique ID string.
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                        example: users
-                      id:
-                        $ref: "../../../docs/schemas.yml#/UUID"
-ScrollID:
-  name: scrollID
-  in: path
-  description: Scroll ID or unique slug.
-  required: true
-  schema:
-    oneOf:
-      - $ref: "../../../docs/schemas.yml#/UUID"
-      - type: string
-  examples:
-    uuidExample:
-      summary: Example UUID
-      value: dd486183-17f9-52e0-92a9-45ff579bdeea
-    usernameExample:
-      summary: Example slug
-      value: alarm
-ScrollFields:
-  name: fields[scrolls]
-  in: query
-  description: |
-    This optional parameter is a comma-separated list of the attributes
-    that you would like to receive back for the scroll requested. Possible
-    values include any combination of `slug`, `name`, `description`,
-    `body`, `attribution`, `start`, `notes`, `created`, and `updated`.
-  schema:
-    type: string
-  examples:
-    summaryExample:
-      summary: Fields you might use for a summary, card, or search result
-      value: slug,name,description
-    datesExample:
-      summary: Just the date fields
-      value: created,updated
-    notes:
-      summary: Just the notes
-      value: notes
-    start:
-      summary: Just the number of starting seals
-      value: start
+            type:
+              type: string
+              example: "scrolls"
+            attributes:
+              allOf:
+                - $ref: "../../items/docs/schemas.yml#/components/schemas/ItemAttributes"
+                - description: The fields associated with a scroll.
+                  required: [name, start]
+                  type: object
+                  properties:
+                    start:
+                      $ref: "../../../docs/common.yml#/components/schemas/RandomizedString"
+                    notes:
+                      type: array
+                      items:
+                        $ref: "../../../docs/common.yml#/components/schemas/Note"
+            relationships:
+              $ref: "../../items/docs/schemas.yml#/components/schemas/AuthorsRelationship"
+
+    ScrollPatch:
+      description: The object that a client must provide to update a scroll.
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [type, id, attributes]
+          properties:
+            type:
+              type: string
+              example: "scrolls"
+            id:
+              $ref: "../../../docs/common.yml#/components/schemas/UUID"
+            attributes:
+              allOf:
+                - $ref: "../../items/docs/schemas.yml#/components/schemas/ItemAttributes"
+                - description: The fields associated with a scroll.
+                  type: object
+                  properties:
+                    start:
+                      $ref: "../../../docs/common.yml#/components/schemas/RandomizedString"
+                    notes:
+                      type: array
+                      items:
+                        $ref: "../../../docs/common.yml#/components/schemas/Note"
+            relationships:
+              $ref: "../../items/docs/schemas.yml#/components/schemas/AuthorsRelationship"

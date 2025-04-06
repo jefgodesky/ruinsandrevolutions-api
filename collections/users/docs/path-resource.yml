@@ -5,15 +5,15 @@ get:
   description: Retrieves the record for a single user.
   operationId: getUser
   parameters:
-    - $ref: "./schemas.yml#/UserID"
-    - $ref: "./schemas.yml#/UserFields"
+    - $ref: "./parameters.yml#/components/parameters/UserID"
+    - $ref: "./parameters.yml#/components/parameters/UserFields"
   responses:
     200:
       description: User found.
       content:
         application/json:
           schema:
-            $ref: "./schemas.yml#/UserResponse"
+            $ref: "./schemas.yml#/components/schemas/UserResponse"
 patch:
   tags:
     - Users
@@ -26,8 +26,8 @@ patch:
   security:
     - bearerAuth: [ ]
   parameters:
-    - $ref: "./schemas.yml#/UserID"
-    - $ref: "./schemas.yml#/UserFields"
+    - $ref: "./parameters.yml#/components/parameters/UserID"
+    - $ref: "./parameters.yml#/components/parameters/UserFields"
   requestBody:
     description: |
       The user selected by `userId` will be updated to the new value
@@ -36,14 +36,14 @@ patch:
     content:
       application/json:
         schema:
-          $ref: "./schemas.yml#/UserPatch"
+          $ref: "./schemas.yml#/components/schemas/UserPatch"
   responses:
     200:
       description: User updated.
       content:
         application/json:
           schema:
-            $ref: "./schemas.yml#/UserResponse"
+            $ref: "./schemas.yml#/components/schemas/UserResponse"
 delete:
   tags:
     - Users
@@ -61,7 +61,7 @@ delete:
   security:
     - bearerAuth: [ ]
   parameters:
-    - $ref: "./schemas.yml#/UserID"
+    - $ref: "./parameters.yml#/components/parameters/UserID"
   responses:
     204:
       description: User deleted.
